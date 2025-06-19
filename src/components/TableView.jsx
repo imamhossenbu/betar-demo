@@ -85,13 +85,33 @@ const TableView = ({
     };
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-7xl">
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-                বাংলাদেশ বেতার : অনুষ্ঠান কিউশিট ও সিডি চার্ট
-            </h1>
+        <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-[1600px]">
+            <header>
+                <div className="flex justify-between items-center mt-12">
+                    <div></div>
+                    <div className="text-center text-sm">
+                        <p>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
+                        <p>বাংলাদেশ বেতার, বরিশাল।</p>
+                        <p><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">এপঃ</span> Bangladesh Betar</p>
+                        <p className="border-b border-b-black">ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
+                    </div>
+                    <div className="text-left text-sm">
+                        <p>সোমবার</p>
+                        <p className="border-b border-b-black">২৫ ফাল্গুন, ১৪৩১ বঙ্গাব্দ </p>
+                        <p>১০/০৩/২০২৫ খ্রিষ্টাব্দ </p>
+                    </div>
+                </div>
+            </header>
+            <table className=" mt-4 border-collapse border border-black mx-auto">
+                <tr className="border border-black text-sm">
+                    <td className="border border-black px-2">অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ </td>
+                    <td className="border border-black px-2">অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান </td>
+                    <td className="border border-black px-2">ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন</td>
+                </tr>
+            </table>
 
             <div className="overflow-x-auto rounded-lg border border-gray-200 mb-4">
-                <table border="1" className="min-w-full divide-y divide-gray-200">
+                <table border="1" className="min-w-full divide-y table-auto w-full divide-gray-200">
                     <thead className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
                         <tr>
                             <th
@@ -100,7 +120,7 @@ const TableView = ({
                             >
                                 ক্রমিক
                             </th>
-                            <th
+                            <th colSpan={2}
                                 scope="col"
                                 className="py-3 px-4 text-left text-sm font-semibold border border-gray-300 uppercase tracking-wider"
                             >
@@ -108,7 +128,7 @@ const TableView = ({
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-4 text-left text-sm font-semibold uppercase border border-gray-300 tracking-wider"
+                                className="py-3 px-4 w-[200px] text-left text-sm font-semibold uppercase border border-gray-300 tracking-wider"
                             >
                                 অনুষ্ঠান বিবরণী
                             </th>
@@ -144,6 +164,18 @@ const TableView = ({
                             </th>
                             <th
                                 scope="col"
+                                className="py-3 px-4 text-left text-sm font-semibold uppercase border border-gray-300 tracking-wider"
+                            >
+                                প্রচার মন্তব্য
+                            </th>
+                            <th
+                                scope="col"
+                                className="py-3 px-4 text-left text-sm font-semibold uppercase border border-gray-300 tracking-wider"
+                            >
+                                ডি/ও স্বাক্ষর
+                            </th>
+                            <th
+                                scope="col"
                                 className="py-3 px-4 text-center text-sm font-semibold uppercase border border-gray-300 tracking-wider rounded-tr-lg"
                             >
                                 Action
@@ -160,10 +192,13 @@ const TableView = ({
                                 <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {item.serial || ' '}
                                 </td>
+                                <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {item.shift || ' '}
+                                </td>
                                 <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-sm text-gray-700">
                                     {item.broadcastTime || ' '}
                                 </td>
-                                <td className="py-3 px-4 text-sm border border-gray-300 text-gray-700">
+                                <td className="py-3 px-4 w-[200px] text-sm border border-gray-300 text-gray-700">
                                     <input
                                         type="checkbox"
                                         checked={selectedCeremonies.includes(item.programDetails)}
@@ -192,6 +227,12 @@ const TableView = ({
                                 </td>
                                 <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-sm text-gray-700">
                                     {item.duration || ' '}
+                                </td>
+                                <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-sm text-gray-700">
+
+                                </td>
+                                <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-sm text-gray-700">
+
                                 </td>
                                 <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-center text-sm font-medium">
                                     <button
