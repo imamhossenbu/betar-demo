@@ -75,6 +75,10 @@ const TableView = ({
         // alert('Data saved successfully!'); // Using alert as per previous pattern
     };
 
+    const handlePrint = () => {
+        window.print();
+    }
+
     // Function to handle checkbox changes
     const handleCheckboxChange = (programDetails) => {
         setSelectedCeremonies((prevSelected) =>
@@ -85,7 +89,7 @@ const TableView = ({
     };
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-[1600px]">
+        <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-[1800px]">
             <header>
                 <div className="flex justify-between items-center mt-12">
                     <div></div>
@@ -111,8 +115,8 @@ const TableView = ({
             </table>
 
             <div className="overflow-x-auto rounded-lg border border-gray-200 mb-4">
-                <table border="1" className="min-w-full divide-y table-auto w-full divide-gray-200">
-                    <thead className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                <table border="1" className="min-w-[1440px] divide-y table-auto w-full divide-gray-200">
+                    <thead className="">
                         <tr>
                             <th
                                 scope="col"
@@ -211,10 +215,7 @@ const TableView = ({
                                 <td className="py-3 px-4 border border-gray-300 text-sm text-gray-700">
                                     {/* Display artist names one by one line */}
                                     {item.artist
-                                        ? item.artist.split(/, /).map((artistName, artistIndex) => (
-                                            <div key={artistIndex}>{artistName.trim() || ' '}</div>
-                                        ))
-                                        : ' '}
+                                        || ' '}
                                 </td>
                                 <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-sm text-gray-700">
                                     {item.lyricist || ' '}
@@ -291,6 +292,7 @@ const TableView = ({
                     Source: বাংলাদেশ বেতার, বরিশাল - www.betar.gov.bd
                 </p>
             </div>
+            <button onClick={handlePrint}>print</button>
         </div>
     );
 };
