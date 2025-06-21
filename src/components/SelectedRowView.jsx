@@ -10,7 +10,7 @@ const SelectedRowsView = () => {
     }
 
     return (
-        <div className="p-6">
+        <div className="p-6 font-[kalpurush]">
             <header>
                 <div className="flex justify-between items-center mt-12">
                     <div></div>
