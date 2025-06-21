@@ -916,43 +916,235 @@
     "duration": ""
   },
   {
-    "serial": "৪৩", 
-    "broadcastTime": "১১.০৫ মি.",
-    "programDetails": "ক) পরবর্তী অধিবেশনের অনুষ্ঠান পরিচিতি",
-    "artist": "",
-    "lyricist": "",
-    "composer": "",
-    "cdCut": "",
-    "duration": ""
-  },
-  {
-    "serial": "",
+    "serial": "", 
+    "shift":"",
     "broadcastTime": "",
-    "programDetails": "খ) পবিত্র কুরআন ও হাদীসের বাণী",
-    "artist": "",
-    "lyricist": "",
-    "composer": "",
-    "cdCut": "",
-    "duration": ""
+    "programDetails": "নুর এ খোদা ",
+    "artist": " আরেফীন রুমি ও সহশিল্পীবৃন্দ",
+    "lyricist": "ছায়াছবিঃ ছায়া-ছবি",
+    "composer": ".........",
+    "cdCut": "৫০০৪/০৭",
+    "duration": "০৪:১২ মি." 
   },
   {
-    "serial": "",
+    "serial": "", 
+    "shift":"",
     "broadcastTime": "",
-    "programDetails": "গ) প্রথম অধিবেশনের সমাপ্তি ঘোষণা",
+    "programDetails": "দিন দুনিয়ার মালিক খোদা...", 
+    "artist": " এস আই টুটুল ",
+    "lyricist": "ছায়াছবিঃ মনের জ্বালা ",
+    "composer": ".........",
+    "cdCut": " ৪০৬৪/২০",
+    "duration": "০৪:৪৫ মি." 
+  },
+  {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "হাসির পরে কান্না কান্নার পরে হাসি", 
+    "artist": " এন্ড্রু কিশোর ও রুনা লায়লা ",
+    "lyricist": "ছায়াছবিঃ ছোট্ট সংসার  ",
+    "composer": ".........",
+    "cdCut": " ৪০৫৮/০৯",
+    "duration": "০৩:০৪ মি." 
+  },
+  {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "পালাইয়া কই যাইবারে মানুষ...", 
+    "artist": " বিপ্লব ",
+    "lyricist": "ছায়াছবিঃ পিতা পুত্রের গল্প ",
+    "composer": ".........",
+    "cdCut": " ৪০৬৩/০৪",
+    "duration": "০৪:২০ মি."  
+  },
+  {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "ভালোবাসা ভালোবাসা..", 
+    "artist": " কনকচাঁপা",
+    "lyricist": "ছায়াছবিঃ এক টাকার বউ ",
+    "composer": ".........",
+    "cdCut": " ৫০৩১/১০",
+    "duration": "০৪:০০ মি."  
+  },
+  {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "আমি চের নইরে..", 
+    "artist": " এন্ড্রু কিশোর",
+    "lyricist": "ছায়াছবিঃ এক মন এক প্রাণ ", 
+    "composer": ".........",
+    "cdCut": " ৪০৫৮/১৫",
+    "duration": "০৪:১৩ মি."   
+  },
+  {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "ছায়াঘেরা অন্ধকারে..", 
+    "artist": " মিলন মাহমুদ",
+    "lyricist": "ছায়াছবিঃ চোরাবালী ", 
+    "composer": ".........",
+    "cdCut": " ৫০০৮/০৫",
+    "duration": "০৪:১২ মি."   
+  },
+  {
+    "serial": "৪৫",
+    "shift":",,", 
+    "broadcastTime": "১০.৩০ মি.", 
+    "programDetails": "ফেরদৌসী রহমান",
     "artist": "",
     "lyricist": "",
     "composer": "",
     "cdCut": "",
     "duration": ""
   },
-  {
-    "serial": "২৮",
-    "broadcastTime": "১১.১০ মি.",
-    "programDetails": "সমাপ্তি",
-    "artist": "",
-    "lyricist": "",
+   {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "সুন্দর পৃথিবীতে..", 
+    "artist": " ফেরদৌসী রহমান",
+    "lyricist": "আজিজুর রহমান ",  
+    "composer": "রবিন ঘোষ",
+    "cdCut": " ৪০৪০/০৪",
+    "duration": "০৪:০০ মি."   
+  },
+   {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "আমি সাগরের ও নীলে..", 
+    "artist": " ফেরদৌসী রহমান",
+    "lyricist": "আবু হেনা মোস্তফা কামাল ",  
+    "composer": "আব্দুল আহাদ",
+    "cdCut": " ৪০৪০/১২",
+    "duration": "০৪:১০ মি."    
+  },
+   {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "কিছুই বলা যায় না..", 
+    "artist": " ফেরদৌসী রহমান",
+    "lyricist": "আজিজুর রহমান ",  
+    "composer": "সত্য সাহা",
+    "cdCut": " ৪০৪০/১১",
+    "duration": "০৪:১২ মি."    
+  },
+   {
+    "serial": "৪৬", 
+    "shift":",,",
+    "broadcastTime": "১০.৪৫ মি.", 
+    "programDetails": "দেশের গান..", 
+    "artist": " ",
+    "lyricist": " ",  
     "composer": "",
-    "cdCut": "",
-    "duration": ""
+    "cdCut": " ",
+    "duration": " "    
+  },
+   {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "নদীর মাঝি বলে এসো নবীন..", 
+    "artist": " রুনা লায়লা",
+    "lyricist": "আবু হেনা মোস্তফা কামাল ",  
+    "composer": ".........",
+    "cdCut": ".২০৭/০৮",
+    "duration": "০৪:৩০ মি."    
+  },
+   {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "পদ্ম পাতার পানি নয়..", 
+    "artist": " এন্ড্রু কিশোর",
+    "lyricist": "মো: রফিকুজ্জামান ",  
+    "composer": ".........",
+    "cdCut": ".২০৭/৩৩", 
+    "duration": "০৪:০৫ মি."    
+  },
+  {
+    "serial": "৪৭", 
+    "shift":",,",
+    "broadcastTime": "১০.৫৫ মি.",  
+    "programDetails": "ক) আগামীকালের অনুষ্ঠান পরিচিতি, খ) স্পটঃ ডেঙ্গু সতর্কতা বিষয়ক সিডি- ১৯০, কাট-১৯, স্থিতি-০২.২৩ মি. ", 
+    "artist": " ",
+    "lyricist": " ",  
+    "composer": "",
+    "cdCut": " ",
+    "duration": " "    
+  },
+  {
+    "serial": "৪৮",  
+    "shift":",,",
+    "broadcastTime": "১১.০০ মি.",  
+    "programDetails": "বাংলা সংবাদ : ঢাকা থেকে রিলে", 
+    "artist": " ",
+    "lyricist": " ",  
+    "composer": "",
+    "cdCut": " ",
+    "duration": " "    
+  },
+  {
+    "serial": "৪৯",  
+    "shift":",,",
+    "broadcastTime": "১১.০৫ মি.",  
+    "programDetails": "আবহাওয়া বার্তা : ঢাকা থেকে রিলে", 
+    "artist": " ",
+    "lyricist": " ",  
+    "composer": "",
+    "cdCut": " ",
+    "duration": " "    
+  },
+  {
+    "serial": "৫০",   
+    "shift":",,",
+    "broadcastTime": "১১.০৭ মি.",  
+    "programDetails": "ভক্তিমূলক গান ", 
+    "artist": " ",
+    "lyricist": " ",  
+    "composer": "",
+    "cdCut": " ",
+    "duration": " "    
+  },
+   {
+    "serial": "", 
+    "shift":"",
+    "broadcastTime": "",
+    "programDetails": "আকাশের তারা গুলি..", 
+    "artist": " আবুল সরকার ",
+    "lyricist": "আবুল সরকার",  
+    "composer": ".........",
+    "cdCut": ".২৩৬/০২", 
+    "duration": "০৫:৩০ মি."    
+  },
+  {
+    "serial": "৫১",   
+    "shift":",,",
+    "broadcastTime": "১১.১২ মি.",   
+    "programDetails": "ক) পবিত্র করমান ও হাদিসের বাণী , খ) সমাপ্তি ঘোষণা, গ) জাতীয় সঙ্গীত (যন্ত্রে)  ", 
+    "artist": " ",
+    "lyricist": " ",  
+    "composer": "",
+    "cdCut": " ",
+    "duration": " "    
+  },
+  {
+    "serial": "৫২",   
+    "shift":",,",
+    "broadcastTime": "১১.১৫ মি.",  
+    "programDetails": "সমাপ্তি", 
+    "artist": " ",
+    "lyricist": " ",  
+    "composer": "",
+    "cdCut": " ",
+    "duration": " "    
   }
+
 ]

@@ -1,134 +1,16 @@
-import React, { useState } from 'react';
-import EntryModal from './EntryModal'; // Import EntryModal from the same components folder
-import { FaEdit } from 'react-icons/fa';
-import { MdDelete } from 'react-icons/md';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-// Component for the main table view
-const TableView = ({
-    scheduleData,
-    setScheduleData,
-    selectedCeremonies,
-    setSelectedCeremonies,
-}) => {
-    const [isModalOpen, setIsModalOpen] = useState(false); // Controls if the modal is open
-    const [currentEditIndex, setCurrentEditIndex] = useState(null); // Index of the item being edited
-    const [modalInitialData, setModalInitialData] = useState({}); // Data to pre-fill the modal
-    // const { day, part } = useParams();
-    // const [selectedRows, setSelectedRows] = useState([]);
-    const [selectedIndexes, setSelectedIndexes] = useState([]);
-
+const SelectedRowsView = () => {
+    const { state } = useLocation();
     const navigate = useNavigate();
+    const selectedRows = state?.selectedRows || [];
 
-    const handleRowCheckboxChange = (index) => {
-        setSelectedIndexes((prev) =>
-            prev.includes(index)
-                ? prev.filter((i) => i !== index)
-                : [...prev, index]
-        );
-    };
-
-
-    const handleShowSelectedClick = () => {
-        const selectedRows = selectedIndexes.map((i) => scheduleData[i]);
-        navigate('/selected', { state: { selectedRows } });
-    };
-
-
-    const defaultNewEntry = {
-        serial: '',
-        broadcastTime: '',
-        programDetails: '',
-        artist: '',
-        lyricist: '',
-        composer: '',
-        cdCut: '',
-        duration: '',
-    };
-
-    // Function to handle deleting a row
-    const handleDelete = (indexToDelete) => {
-        // Show a confirmation message using a custom div instead of alert
-        const confirmation = window.confirm("Are you sure you want to delete this entry?");
-        if (confirmation) {
-            // Remove the item from selectedCeremonies if it was checked
-            const updatedSelectedCeremonies = selectedCeremonies.filter(
-                (item) => item !== scheduleData[indexToDelete].programDetails
-            );
-            setSelectedCeremonies(updatedSelectedCeremonies);
-
-            // Remove the row from scheduleData
-            const updatedSchedule = scheduleData.filter((_, index) => index !== indexToDelete);
-            setScheduleData(updatedSchedule);
-            console.log('Deleted row at index:', indexToDelete);
-        }
-    };
-
-    const handleSubmit = () => {
-        navigate('/print', { state: { selectedRows: selectedCeremonies } });
-    };
-
-
-
-    // Function to handle editing a row
-    const handleEdit = (indexToEdit) => {
-        setCurrentEditIndex(indexToEdit);
-        // Create a deep copy of the object to avoid direct state mutation
-        setModalInitialData({ ...scheduleData[indexToEdit] });
-        setIsModalOpen(true);
-    };
-
-    // Function to handle opening the modal for adding a new entry
-    const handleAddNewClick = () => {
-        setCurrentEditIndex(null); // Indicates we are adding, not editing
-        setModalInitialData(defaultNewEntry); // Provide empty data for a new entry
-        setIsModalOpen(true);
-    };
-
-    // Function to handle saving data from the modal
-    const handleSaveModalData = (savedData) => {
-        if (currentEditIndex !== null) {
-            // Editing existing entry
-            const updatedSchedule = [...scheduleData];
-            updatedSchedule[currentEditIndex] = savedData;
-            setScheduleData(updatedSchedule);
-        } else {
-            // Adding new entry
-            const newSerial = (scheduleData.length + 1).toString(); // Simple serial generation
-            setScheduleData((prev) => [...prev, { ...savedData, serial: newSerial }]);
-        }
-        // No need to close modal here, it's handled by EntryModal itself
-        // alert('Data saved successfully!'); // Using alert as per previous pattern
-    };
-
-
-    const handleShowReport = (item) => {
-        // Navigate to the report page and pass this ceremony’s data
-        navigate('/report', { state: { ceremony: item } });
-    };
-
-
-
-    // Function to handle checkbox changes
-    const handleCheckboxChange = (item) => {
-        setSelectedCeremonies((prevSelected) => {
-            const alreadySelected = prevSelected.find(
-                (ceremony) => ceremony.programDetails === item.programDetails && ceremony.broadcastTime === item.broadcastTime
-            );
-            if (alreadySelected) {
-                return prevSelected.filter(
-                    (ceremony) =>
-                        !(ceremony.programDetails === item.programDetails && ceremony.broadcastTime === item.broadcastTime)
-                );
-            } else {
-                return [...prevSelected, item];
-            }
-        });
-    };
-
+    const handlePrint = () => {
+        window.print();
+    }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-[1800px]">
+        <div className="p-6">
             <header>
                 <div className="flex justify-between items-center mt-12">
                     <div></div>
@@ -138,11 +20,30 @@ const TableView = ({
                         <p><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">এপঃ</span> Bangladesh Betar</p>
                         <p className="border-b border-b-black">ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
                     </div>
-                    <div className="text-left text-sm">
-                        <p>সোমবার</p>
-                        <p className="border-b border-b-black">২৫ ফাল্গুন, ১৪৩১ বঙ্গাব্দ </p>
-                        <p>১০/০৩/২০২৫ খ্রিষ্টাব্দ </p>
+                    <div className="text-left text-sm ">
+                        <p
+                            contentEditable
+                            suppressContentEditableWarning
+                            className="outline-none border border-dashed border-gray-400 px-1 hover:border-black"
+                        >
+                            সোমবার
+                        </p>
+                        <p
+                            contentEditable
+                            suppressContentEditableWarning
+                            className="border-b border-b-black outline-none border-dashed border-gray-400 px-1 hover:border-black"
+                        >
+                            ২৫ ফাল্গুন, ১৪৩১ বঙ্গাব্দ
+                        </p>
+                        <p
+                            contentEditable
+                            suppressContentEditableWarning
+                            className="outline-none border-dashed border-gray-400 px-1 hover:border-black"
+                        >
+                            ১০/০৩/২০২৫ খ্রিষ্টাব্দ
+                        </p>
                     </div>
+
                 </div>
             </header>
             <table className=" mt-4 border-collapse border border-black mx-auto">
@@ -154,7 +55,7 @@ const TableView = ({
             </table>
 
             <div className="overflow-x-auto rounded-lg border border-gray-200 mb-4">
-                <table border="1" className="min-w-[1500px] divide-y table-auto w-full divide-gray-200">
+                <table border="1" className="min-w-[1440px] divide-y table-auto w-full divide-gray-200">
                     <thead className="">
                         <tr>
                             <th
@@ -217,16 +118,10 @@ const TableView = ({
                             >
                                 ডি/ও স্বাক্ষর
                             </th>
-                            <th
-                                scope="col"
-                                className="py-3 px-4 text-center text-sm font-semibold uppercase border border-gray-300 tracking-wider rounded-tr-lg"
-                            >
-                                Action
-                            </th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {scheduleData.map((item, index) => (
+                        {selectedRows.map((item, index) => (
                             <tr
                                 key={index}
                                 className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
@@ -244,16 +139,6 @@ const TableView = ({
 
                                 <td className="py-3 px-4 w-[240px] sm:w-[280px] text-sm border border-gray-300 text-gray-700">
                                     <label className="flex items-start gap-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedCeremonies.some(
-                                                (ceremony) =>
-                                                    ceremony.programDetails === item.programDetails &&
-                                                    ceremony.broadcastTime === item.broadcastTime
-                                            )}
-                                            onChange={() => handleCheckboxChange(item)}
-                                            className="mt-1.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                        />
 
                                         <span className="flex flex-col">
                                             {item.programDetails
@@ -289,69 +174,12 @@ const TableView = ({
                                 <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-sm text-gray-700">
 
                                 </td>
-                                <td className="py-3 px-4 border border-gray-300 whitespace-nowrap text-center text-sm font-medium">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedIndexes.includes(index)}
-                                        onChange={() => handleRowCheckboxChange(index)}
-                                        className="mr-2"
-                                    />
-
-                                    <button
-                                        type="button"
-                                        onClick={() => handleEdit(index)}
-                                        className="text-white  mr-2 px-2 py-2 rounded-full bg-black border border-white hover:bg-gray-800 transition-colors"
-                                    >
-                                        <FaEdit />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleDelete(index)}
-                                        className="text-red-600 hover:text-red-900 px-2 py-2 rounded-full border border-red-600 hover:bg-red-50 transition-colors"
-                                    >
-                                        <MdDelete />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleShowReport(item)}
-                                        className="text-blue-600 hover:text-blue-800 px-2 py-1 border border-blue-600 rounded-full hover:bg-blue-50 transition-colors ml-2"
-                                    >
-                                        Report
-                                    </button>
-                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
-            <div className="flex justify-end space-x-4 mt-6">
-                <button
-                    type="button"
-                    onClick={handleAddNewClick}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105"
-                >
-                    Add New
-                </button>
-                <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105"
-                >
-                    Submit
-                </button>
-            </div>
-
-            {/* Entry Modal for both Add and Edit */}
-            <EntryModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                initialData={modalInitialData}
-                onSave={handleSaveModalData}
-                title={currentEditIndex !== null ? 'Edit Entry' : 'Add New Entry'}
-            />
-
-            {/* Example Footer / Additional Info */}
             <footer className='flex items-center justify-between my-28 text-sm'>
                 <div className='text-center'>
                     <p>মো. ফারুক হাওলাদার</p>
@@ -367,12 +195,18 @@ const TableView = ({
                     <p>আঞ্চলিক পরিচালকের পক্ষে </p>
                 </div>
             </footer>
-            <div className="flex justify-end mt-4">
+            <div className="flex gap-4 mt-4 print:hidden">
                 <button
-                    onClick={handleShowSelectedClick}
-                    className="bg-blue-600 text-white px-4 py-2 rounded"
+                    onClick={() => navigate(-1)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded"
                 >
-                    Show Selected
+                    Back
+                </button>
+                <button
+                    onClick={handlePrint}
+                    className="px-4 py-2 bg-gray-600 text-white rounded"
+                >
+                    Print
                 </button>
             </div>
 
@@ -380,4 +214,4 @@ const TableView = ({
     );
 };
 
-export default TableView;
+export default SelectedRowsView;
