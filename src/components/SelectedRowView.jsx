@@ -54,7 +54,7 @@ const SelectedRowsView = () => {
                 </tr>
             </table>
 
-            <div className="overflow-x-auto rounded-lg border border-gray-200 mb-4">
+            <div className="overflow-x-auto rounded-lg  mb-4">
                 <table border="1" className="min-w-[1440px] divide-y table-auto w-full divide-gray-200">
                     <thead className="">
                         <tr>
