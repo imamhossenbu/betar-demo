@@ -1,8 +1,9 @@
 // components/EntryModal.jsx
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2'; // Ensure Swal is imported for notifications
+import { MdOutlineClose } from 'react-icons/md'; // Import for close icon
 
-const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgramType }) => {
+const EntryModal = ({ isOpen, onClose, initialData, onSave, title }) => {
     const [formData, setFormData] = useState(initialData);
     // Initialize programType based on initialData or default to 'General'
     const [programType, setProgramType] = useState(initialData.programType || 'General');
@@ -33,6 +34,11 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
                 newFormData.composer = '';
                 newFormData.cdCut = '';
                 newFormData.duration = '';
+            } else { // If switching to Song, ensure non-song fields are cleared if they shouldn't apply
+                newFormData.programDetails = ''; // Program details might not be applicable for songs in the same way
+                newFormData.serial = '';
+                newFormData.period = '';
+                newFormData.shift = '';
             }
             return newFormData;
         });
@@ -47,73 +53,83 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4 sm:p-6">
             <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-lg md:max-w-xl lg:max-w-2xl overflow-y-auto max-h-[90vh] font-[kalpurush]">
+                <button
+                    className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl"
+                    onClick={onClose}
+                >
+                    <MdOutlineClose />
+                </button>
                 <h2 className="text-2xl font-bold mb-4 sm:mb-6 text-gray-800 text-center">{title}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 sm:mb-6">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">ক্রমিক (Serial):</label>
-                            <input
-                                type="text"
-                                name="serial"
-                                value={formData.serial || ''}
-                                onChange={handleChange}
-                                className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">প্রচার সময় (Broadcast Time):</label>
-                            <input
-                                type="text"
-                                name="broadcastTime"
-                                value={formData.broadcastTime || ''}
-                                onChange={handleChange}
-                                className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 sm:mb-6">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">অনুষ্ঠান ধরণ (Program Type):</label>
-                            <select
-                                name="programType"
-                                value={programType} // Controlled by programType state
-                                onChange={handleProgramTypeChange}
-                                className="shadow border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
-                                required
-                            >
-                                <option value="General">সাধারণ অনুষ্ঠান (General Program)</option>
-                                <option value="Song">সঙ্গীত (Song)</option>
-                                {/* Add other program types as needed */}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">অধিবেশন (Period):</label>
-                            <input
-                                type="text"
-                                name="period"
-                                value={formData.period || ''}
-                                onChange={handleChange}
-                                className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
-                                required // Period is always required
-                            />
-                        </div>
-                    </div>
-
-
+                    {/* Program Type Selection - Always visible */}
                     <div className="mb-4 sm:mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">অনুষ্ঠান বিবরণী (Program Details):</label>
-                        <textarea
-                            name="programDetails"
-                            value={formData.programDetails || ''}
-                            onChange={handleChange}
-                            className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent h-20 text-sm sm:text-base"
-                            // programDetails is NOT required if programType is 'Song'
-                            required={programType !== 'Song'}
-                        ></textarea>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">অনুষ্ঠান ধরণ (Program Type):</label>
+                        <select
+                            name="programType"
+                            value={programType} // Controlled by programType state
+                            onChange={handleProgramTypeChange}
+                            className="shadow border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
+                            required
+                        >
+                            <option value="General">সাধারণ অনুষ্ঠান (General Program)</option>
+                            <option value="Song">সঙ্গীত (Song)</option>
+                        </select>
                     </div>
+
+                    {/* Fields for General Program Type and always visible fields */}
+                    {programType !== 'Song' && (
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 sm:mb-6">
+                                <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">ক্রমিক (Serial):</label>
+                                    <input
+                                        type="text"
+                                        name="serial"
+                                        value={formData.serial || ''}
+                                        onChange={handleChange}
+                                        className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
+                                        required={programType !== 'Song'} // Required only for General
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">প্রচার সময় (Broadcast Time):</label>
+                                    <input
+                                        type="text"
+                                        name="broadcastTime"
+                                        value={formData.broadcastTime || ''}
+                                        onChange={handleChange}
+                                        className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
+                                        required={programType !== 'Song'} // Required only for General
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="mb-4 sm:mb-6">
+                                <label className="block text-gray-700 text-sm font-bold mb-2">অনুষ্ঠান বিবরণী (Program Details):</label>
+                                <textarea
+                                    name="programDetails"
+                                    value={formData.programDetails || ''}
+                                    onChange={handleChange}
+                                    className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent h-20 text-sm sm:text-base"
+                                    required={programType !== 'Song'} // Required only for General
+                                ></textarea>
+                            </div>
+
+                            {/* Period field - only visible for General Program Type */}
+                            <div className="mb-4 sm:mb-6">
+                                <label className="block text-gray-700 text-sm font-bold mb-2">অধিবেশন (Period):</label>
+                                <input
+                                    type="text"
+                                    name="period"
+                                    value={formData.period || ''}
+                                    onChange={handleChange}
+                                    className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
+                                    required={programType !== 'Song'} // Required only for General
+                                />
+                            </div>
+                        </>
+                    )}
+
 
                     {/* Conditionally rendered fields for 'Song' type */}
                     {programType === 'Song' && (
@@ -127,6 +143,7 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
                                         value={formData.artist || ''}
                                         onChange={handleChange}
                                         className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm sm:text-base"
+                                        required // Artist is required for Song type
                                     />
                                 </div>
                                 <div>
@@ -175,6 +192,12 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
                             </div>
                         </>
                     )}
+
+                    {/* Hidden fields for day, date, shift - these should always be passed */}
+                    <input type="hidden" name="day" value={formData.day || ''} />
+                    <input type="hidden" name="date" value={formData.date || ''} />
+                    <input type="hidden" name="shift" value={formData.shift || ''} />
+
 
                     <div className="flex justify-end space-x-3 sm:space-x-4 mt-6">
                         <button

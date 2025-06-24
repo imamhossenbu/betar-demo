@@ -16,6 +16,9 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     const [loadingCdCutIndex, setLoadingCdCutIndex] = useState(null);
     const debounceTimeoutRefs = useRef({}); // প্রতিটি রো-এর জন্য ডিবাউন্স টাইমআউট রেফারেন্স সংরক্ষণ করার জন্য
 
+    // নতুন স্টেট যা প্রদর্শনের জন্য বাংলা সিরিয়াল সহ ডেটা রাখবে
+    const [displayedScheduleData, setDisplayedScheduleData] = useState([]);
+
     const navigate = useNavigate();
     const location = useLocation();
     const { shift: urlShiftKey } = useParams();
@@ -44,14 +47,29 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     const convertToEnglishNumber = (num) => {
         const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         const bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        // Ensure num is treated as a string to handle mixed or non-numeric Bengali characters
         return String(num).split('').map(digit => {
             const index = bengaliNumbers.indexOf(digit);
             return index !== -1 ? englishNumbers[index] : digit;
         }).join('');
     };
 
+    // useEffect to format scheduleData for display when it changes
+    // এটি নিশ্চিত করবে যে প্রাথমিক লোড এবং scheduleData prop এর যেকোনো পরিবর্তনের সময় serial গুলো বাংলায় থাকবে।
+    useEffect(() => {
+        const formattedForDisplay = scheduleData.map(item => {
+            // যদি item.serial থাকে এবং এটি একটি স্ট্রিং হয় এবং এটি সংখ্যাসূচক ইংরেজি হয়
+            if (item.serial && typeof item.serial === 'string' && /^\d+$/.test(item.serial)) {
+                return { ...item, serial: convertToBengaliNumber(item.serial) };
+            }
+            // যদি এটি ইতিমধ্যেই বাংলা, অথবা খালি, অথবা অ-সংখ্যাসূচক স্ট্রিং হয়, তাহলে যেমন আছে তেমনই রাখুন
+            return item;
+        });
+        setDisplayedScheduleData(formattedForDisplay);
+    }, [scheduleData]); // scheduleData prop পরিবর্তিত হলে পুনরায় চালান
 
-    // নতুন: টেবিল রো-এর মধ্যে CD Cut ইনপুট পরিবর্তন হলে ডেটা লোড করার হ্যান্ডলার
+
+    // টেবিল রো-এর মধ্যে CD Cut ইনপুট পরিবর্তন হলে ডেটা লোড করার হ্যান্ডলার
     const handleInlineCdCutChange = (e, index) => {
         const newCdCut = e.target.value;
         setScheduleData(prevSchedule => {
@@ -134,26 +152,89 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     };
 
 
-    // No useEffect for fetching data here, as Navbar now fetches and sets scheduleData directly.
+    // Drag and drop শেষ হলে সিরিয়াল এবং orderIndex আপডেট করার হ্যান্ডলার (এবং ডেটাবেসে সংরক্ষণ)
+    const handleDragEnd = async (result) => {
+        if (!result.destination) return; // যদি ড্রপ করার স্থান না থাকে, তাহলে কিছু করবেন না
 
-    const handleDragEnd = (result) => {
-        if (!result.destination) return;
-        const items = Array.from(scheduleData);
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
+        const items = Array.from(scheduleData); // সময়সূচী ডেটার একটি পরিবর্তনযোগ্য কপি তৈরি করুন
+        const [reorderedItem] = items.splice(result.source.index, 1); // ড্র্যাগ করা আইটেমটি সরান
+        items.splice(result.destination.index, 0, reorderedItem); // নতুন অবস্থানে এটি ঢোকান
 
-        const updatedItems = items.map((item, index) => ({
-            ...item,
-            serial: convertToBengaliNumber(index + 1), // Convert to Bengali number after reorder
-        }));
+        const updatesForBackend = []; // ডেটাবেসে আপডেট করার জন্য আইটেম সংরক্ষণ করবে
+        let serialCounter = 1; // শুধুমাত্র যাদের serial আছে তাদের জন্য কাউন্টার
 
-        setScheduleData(updatedItems);
-        // TODO: Optionally send update to server to save new order
-        // If sending to backend, convert to English if backend expects numbers, or ensure backend stores Bengali string
+        const newSchedule = items.map((item, newIndex) => {
+            // Find the original item from the initial scheduleData to determine if it had a serial
+            const originalItem = scheduleData.find(s => s._id === item._id); // Use original scheduleData for comparison
+
+            if (!originalItem) {
+                // এটি এমন একটি আইটেম যা originalScheduleData-তে পাওয়া যায়নি।
+                // এটি এমন ক্ষেত্রে ঘটতে পারে যেখানে একটি নতুন আইটেম যোগ করা হয়েছে কিন্তু এখনও ডাটাবেসে সেভ করা হয়নি।
+                // এই ধরনের আইটেমগুলির জন্য serial বা orderIndex পরিবর্তন করা হবে না।
+                return item;
+            }
+
+            let serialForDisplay = originalItem.serial; // ডিফল্ট হিসেবে original serial থাকবে
+            let serialForBackend = originalItem.serial; // ডিফল্ট হিসেবে original serial থাকবে
+
+            // যদি originalItem-এর serial থাকে (অর্থাৎ খালি নয়), তাহলেই re-index করুন
+            // এখানে originalItem.serial-এর .trim() ব্যবহার করা হয়েছে যাতে শুধুমাত্র whitespace-কে empty ধরা হয়।
+            if (originalItem.serial && originalItem.serial.trim() !== '') {
+                serialForDisplay = convertToBengaliNumber(serialCounter); // নতুন বাংলা সিরিয়াল
+                serialForBackend = convertToEnglishNumber(serialCounter); // নতুন ইংরেজি সিরিয়াল
+                serialCounter++; // কাউন্টার বৃদ্ধি করুন
+            }
+            // else { serialForDisplay and serialForBackend remain as original empty strings, which is the desired behavior }
+
+            // orderIndex সবসময় আপডেটেড ক্রম অনুযায়ী সেট হবে, কারণ এটি ভিজ্যুয়াল অর্ডারের জন্য অপরিহার্য।
+            const newOrderIndex = newIndex;
+
+            // ডেটাবেসের জন্য আপডেট করা আইটেম
+            const updatedItemForBackend = {
+                _id: item._id,
+                orderIndex: newOrderIndex, // Always update orderIndex for persistence
+            };
+
+            // যদি সিরিয়াল পরিবর্তিত হয়, তবে সিরিয়ালও আপডেট payloads এ যোগ করুন
+            const originalSerialBackendFormat = originalItem.serial ? convertToEnglishNumber(originalItem.serial) : '';
+            if (serialForBackend !== originalSerialBackendFormat) {
+                updatedItemForBackend.serial = serialForBackend;
+            }
+
+            // যদি orderIndex বা serial পরিবর্তিত হয়, তবেই backend আপডেটের জন্য push করুন
+            if (newOrderIndex !== originalItem.orderIndex || (updatedItemForBackend.hasOwnProperty('serial') && updatedItemForBackend.serial !== originalSerialBackendFormat)) {
+                updatesForBackend.push(updatedItemForBackend);
+            }
+
+            return {
+                ...item,
+                serial: serialForDisplay, // Local state এর জন্য বাংলা/খালি সিরিয়াল
+                orderIndex: newOrderIndex, // Local state এর জন্য নতুন orderIndex
+            };
+        });
+
+        setScheduleData(newSchedule); // Local state অবিলম্বে আপডেট করুন
+
+        // ডেটাবেসে আপডেট পাঠান
+        if (updatesForBackend.length > 0) {
+            try {
+                const updatePromises = updatesForBackend.map(update => {
+                    const { _id, ...fieldsToUpdate } = update; // _id আলাদা করুন
+                    return axiosPublic.put(`/api/programs/${_id}`, fieldsToUpdate);
+                });
+                await Promise.all(updatePromises);
+                Swal.fire('Success', 'তালিকার ক্রম সফলভাবে আপডেট হয়েছে!', 'success');
+            } catch (error) {
+                console.error('সিরিয়াল/ক্রম আপডেট করতে ব্যর্থ:', error);
+                Swal.fire('Error', 'তালিকার ক্রম আপডেট করতে ব্যর্থ হয়েছে।', 'error');
+                // ত্রুটির ক্ষেত্রে ডেটাবেস থেকে সময়সূচী পুনরায় লোড করার কথা বিবেচনা করুন
+                // উদাহরণস্বরূপ: fetchScheduleData(); যদি আপনার কাছে একটি ফাংশন থাকে
+            }
+        }
     };
 
     const handleDelete = (indexToDelete) => {
-        const itemToDelete = scheduleData[indexToDelete];
+        const itemToDelete = displayedScheduleData[indexToDelete]; // Use displayed data for deletion
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -166,13 +247,21 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             if (result.isConfirmed) {
                 try {
                     await axiosPublic.delete(`/api/programs/${itemToDelete._id}`);
-                    const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete);
-                    // Re-index serials after deletion to maintain order
-                    const reIndexedSchedule = updatedSchedule.map((item, idx) => ({
-                        ...item,
-                        serial: convertToBengaliNumber(idx + 1)
-                    }));
-                    setScheduleData(reIndexedSchedule);
+                    const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete); // Filter original scheduleData
+
+                    let serialCounter = 1;
+                    const reIndexedSchedule = updatedSchedule.map((item, newIndex) => { // newIndex here is important for recalculating orderIndex
+                        // If item had a serial, re-index it.
+                        if (item.serial && item.serial.trim() !== '') {
+                            return {
+                                ...item,
+                                serial: convertToBengaliNumber(serialCounter++),
+                                orderIndex: newIndex // Also update orderIndex for remaining items
+                            };
+                        }
+                        return { ...item, orderIndex: newIndex }; // Keep serial empty if it was empty, but update orderIndex
+                    });
+                    setScheduleData(reIndexedSchedule); // This will trigger the useEffect for displayedScheduleData
 
                     const updatedSelectedCeremonies = selectedCeremonies.filter(
                         (item) => item._id !== itemToDelete._id
@@ -180,6 +269,29 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     setSelectedCeremonies(updatedSelectedCeremonies);
 
                     Swal.fire('Deleted!', 'The entry has been deleted.', 'success');
+
+                    // After deletion, we should also send a bulk update for orderIndex to backend
+                    // to ensure persistent reordering.
+                    const updatesForBackendAfterDelete = reIndexedSchedule.map(item => ({
+                        _id: item._id,
+                        serial: (item.serial && item.serial.trim() !== '') ? convertToEnglishNumber(item.serial) : '', // Ensure serial is English for backend
+                        orderIndex: item.orderIndex
+                    }));
+
+                    if (updatesForBackendAfterDelete.length > 0) {
+                        try {
+                            const updatePromises = updatesForBackendAfterDelete.map(update => {
+                                const { _id, ...fieldsToUpdate } = update;
+                                return axiosPublic.put(`/api/programs/${_id}`, fieldsToUpdate);
+                            });
+                            await Promise.all(updatePromises);
+                            // console.log("Backend orderIndexes updated after deletion.");
+                        } catch (updateError) {
+                            console.error("Failed to update backend orderIndexes after deletion:", updateError);
+                            // Handle this silent failure if necessary
+                        }
+                    }
+
                 } catch (error) {
                     Swal.fire('Error!', 'Failed to delete entry.', 'error');
                 }
@@ -193,7 +305,9 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         const dataForModal = {
             ...scheduleData[indexToEdit],
             // Convert existing serial from potentially English to Bengali for display in modal
-            serial: convertToBengaliNumber(scheduleData[indexToEdit].serial)
+            serial: (scheduleData[indexToEdit].serial && String(scheduleData[indexToEdit].serial).trim() !== '')
+                ? convertToBengaliNumber(scheduleData[indexToEdit].serial)
+                : '' // Keep empty if original was empty
         };
         setModalInitialData(dataForModal);
         setIsModalOpen(true);
@@ -203,7 +317,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         setCurrentEditIndex(null);
         // Populate initial data for the modal
         const baseData = {
-            serial: convertToBengaliNumber(scheduleData.length + 1), // Initialize with Bengali number
+            serial: '', // Default to empty string for new entries
             broadcastTime: '',
             programDetails: '',
             day: dayName,
@@ -216,38 +330,44 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             composer: '',
             cdCut: '',
             duration: '',
+            orderIndex: scheduleData.length // New items get the next order index
         };
 
-        setModalInitialData(baseData); // Simply use baseData, no merging with searchedSongData here
+        setModalInitialData(baseData); // Simply use baseData
         setIsModalOpen(true);
     };
 
     const handleSaveModalData = async (savedData) => {
         const payload = { ...savedData };
 
-        // EntryModal is now responsible for converting the serial to English if needed.
-        // It's also responsible for clearing song-specific fields if programType becomes General.
+        // Serial conversion to English for backend happens here before API call.
+        const bengaliNumericRegex = /^[\u09E৬-\u09EF]+$/;
+
+        // Only convert serial if it's a Bengali numeric string, otherwise keep it as is (including empty)
+        if (typeof payload.serial === 'string' && bengaliNumericRegex.test(payload.serial)) {
+            payload.serial = convertToEnglishNumber(payload.serial);
+        } else {
+            // If it's an English number string, or mixed, or empty, keep it as is.
+            // Ensure it's explicitly a string even if it was number 0 or undefined.
+            payload.serial = String(payload.serial || '');
+        }
 
         if (currentEditIndex !== null) {
             // Update existing program
             try {
-                // Before sending to backend, convert serial from Bengali to English if it's numeric Bengali
-                const englishNumericRegex = /^\d+$/; // Matches only English digits
-                const bengaliNumericRegex = /^[\u09E৬-\u09EF]+$/; // Matches only Bengali digits
-
-                if (bengaliNumericRegex.test(payload.serial)) {
-                    payload.serial = convertToEnglishNumber(payload.serial);
-                } else if (englishNumericRegex.test(payload.serial)) {
-                    payload.serial = payload.serial; // Already English, keep as is
-                } else {
-                    payload.serial = String(payload.serial); // Ensure it's a string
-                }
-
+                // Ensure orderIndex is maintained when updating
+                payload.orderIndex = scheduleData[currentEditIndex].orderIndex;
 
                 await axiosPublic.put(`/api/programs/${scheduleData[currentEditIndex]._id}`, payload);
                 const updatedSchedule = [...scheduleData];
-                updatedSchedule[currentEditIndex] = { ...updatedSchedule[currentEditIndex], ...payload };
-                setScheduleData(updatedSchedule);
+                // Local state update: ensure serial is Bengali for display after successful save
+                updatedSchedule[currentEditIndex] = {
+                    ...updatedSchedule[currentEditIndex],
+                    ...payload,
+                    // Convert back to Bengali for local display, but only if it's not an empty string
+                    serial: (payload.serial === '' ? '' : convertToBengaliNumber(payload.serial))
+                };
+                setScheduleData(updatedSchedule); // এই আপডেট useEffect কে ট্রিগার করবে
                 setIsModalOpen(false);
                 Swal.fire('Success', 'Program updated successfully!', 'success');
             } catch (err) {
@@ -260,24 +380,24 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 payload.day = dayName;
                 payload.date = displayDate;
                 payload.shift = banglaShift;
-                payload.period = payload.period; // Period comes from savedData (now visible in modal)
+                payload.period = payload.period;
+                payload.orderIndex = scheduleData.length; // New item gets the last order index
 
-                // Before sending to backend, convert serial from Bengali to English if it's numeric Bengali
-                const englishNumericRegex = /^\d+$/; // Matches only English digits
-                const bengaliNumericRegex = /^[\u09E৬-\u09EF]+$/; // Matches only Bengali digits
-
-                if (bengaliNumericRegex.test(payload.serial)) {
+                // Before sending to backend, ensure serial is in correct format (handled by general conversion above)
+                if (typeof payload.serial === 'string' && bengaliNumericRegex.test(payload.serial)) {
                     payload.serial = convertToEnglishNumber(payload.serial);
-                } else if (englishNumericRegex.test(payload.serial)) {
-                    payload.serial = payload.serial; // Already English, keep as is
                 } else {
-                    payload.serial = String(payload.serial); // Ensure it's a string
+                    payload.serial = String(payload.serial || '');
                 }
 
                 const res = await axiosPublic.post('/api/programs', payload);
                 // After adding, ensure serial is Bengali for local state, as backend might return English
-                const newProgram = { ...res.data, serial: convertToBengaliNumber(res.data.serial) };
-                setScheduleData(prev => [...prev, newProgram]);
+                const newProgram = {
+                    ...res.data,
+                    // Convert to Bengali for display, but only if it's not an empty string
+                    serial: (res.data.serial === '' ? '' : convertToBengaliNumber(res.data.serial))
+                };
+                setScheduleData(prev => [...prev, newProgram]); // এই আপডেট useEffect কে ট্রিগার করবে
                 setIsModalOpen(false);
                 Swal.fire('Success', 'Program added successfully!', 'success');
             } catch (err) {
@@ -420,7 +540,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                         <Droppable droppableId="schedule">
                             {(provided) => (
                                 <tbody ref={provided.innerRef} {...provided.droppableProps} className="bg-white divide-y divide-gray-200">
-                                    {scheduleData.map((item, index) => (
+                                    {displayedScheduleData.map((item, index) => ( // এখানে displayedScheduleData ব্যবহার করা হয়েছে
                                         <Draggable key={item._id || `program-${index}`} draggableId={item._id || `program-${index}`} index={index}>
                                             {(provided) => (
                                                 <tr
@@ -472,14 +592,14 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (item.composer || ' ') : ''}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700 flex items-center gap-2">
+                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (
                                                             <>
                                                                 <input
                                                                     type="text"
                                                                     value={item.cdCut || ''}
                                                                     onChange={(e) => handleInlineCdCutChange(e, index)}
-                                                                    className="w-full bg-white border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm py-1 px-2"
+                                                                    className="w-full h-full focus:ring-blue-500 focus:border-blue-500 text-sm py-1 px-2"
                                                                     placeholder="CD Cut"
                                                                 />
                                                                 {loadingCdCutIndex === index && (
