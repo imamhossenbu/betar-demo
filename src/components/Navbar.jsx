@@ -46,7 +46,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
             return;
         }
 
-        const { name: dayName, date } = dayDetails;
+        const { name: dayName } = dayDetails;
 
         if (!loggedInUserId) {
             Swal.fire('Error', 'Please log in to view programs.', 'error');
@@ -59,6 +59,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
                 `/api/programs?day=${encodeURIComponent(dayName)}&shift=${encodeURIComponent(shift)}`
             );
             setScheduleData(programsResponse.data);
+            console.log(programsResponse.data);
 
             Swal.fire('Info', `Loading programs for ${dayName} (${shift}).`, 'info');
 
@@ -68,7 +69,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
             if (error.response && error.response.status === 404) {
                 setScheduleData([]);
                 Swal.fire('Info', `No programs found for ${dayName} (${shift}). You can add new ones.`, 'info');
-                navigate(`/schedule/${encodeURIComponent(dayName)}/${encodeURIComponent(shift)}?date=${encodeURIComponent(date)}`);
+                navigate(`/schedule/${encodeURIComponent(dayName)}/${encodeURIComponent(shift)}`);
             } else {
                 Swal.fire('Error', `Failed to load programs: ${error.response?.data?.message || error.message}`, 'error');
             }

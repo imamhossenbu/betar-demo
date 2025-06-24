@@ -1,19 +1,18 @@
-// components/EntryModal.jsx
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2'; // Ensure Swal is imported for notifications
 import { MdOutlineClose } from 'react-icons/md'; // Import for close icon
 
-const EntryModal = ({ isOpen, onClose, initialData, onSave, title }) => {
+const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgramType }) => {
     const [formData, setFormData] = useState(initialData);
-    // Initialize programType based on initialData or default to 'General'
-    const [programType, setProgramType] = useState(initialData.programType || 'General');
+    // Initialize programType based on initialData or currentProgramType, default to 'General'
+    const [programType, setProgramType] = useState(initialData.programType || currentProgramType || 'General');
 
     useEffect(() => {
         // Update form data and program type when initialData changes
         // This ensures the modal correctly reflects the data when editing different items.
         setFormData(initialData);
-        setProgramType(initialData.programType || 'General');
-    }, [initialData]); // Depend only on initialData for state update
+        setProgramType(initialData.programType || currentProgramType || 'General');
+    }, [initialData, currentProgramType]); // Depend on both initialData and currentProgramType
 
     if (!isOpen) return null;
 
@@ -34,11 +33,11 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title }) => {
                 newFormData.composer = '';
                 newFormData.cdCut = '';
                 newFormData.duration = '';
-            } else { // If switching to Song, ensure non-song fields are cleared if they shouldn't apply
-                newFormData.programDetails = ''; // Program details might not be applicable for songs in the same way
+            } else { // If switching to Song, ensure General program fields are cleared
+                // programDetails will now remain, but serial, period, broadcastTime should still be cleared for songs
                 newFormData.serial = '';
                 newFormData.period = '';
-                newFormData.shift = '';
+                newFormData.broadcastTime = '';
             }
             return newFormData;
         });
@@ -46,6 +45,38 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Client-side validation before sending data to backend
+        let missingFields = [];
+
+        // day, date, shift should always be present, they come from TableView's initialData
+        // If they are missing here, it means initialData was not set correctly in TableView.
+        if (!formData.day) missingFields.push('Day'); // Added date to validation based on previous error
+        if (!formData.shift) missingFields.push('Shift');
+        if (!formData.programType) missingFields.push('Program Type');
+
+        // programDetails is required for General, optional for Song
+        if (programType !== 'Song' && !formData.programDetails) {
+            missingFields.push('Program Details');
+        }
+
+        if (programType === 'Song') {
+            if (!formData.artist) missingFields.push('Artist');
+        } else { // General program type
+            if (!formData.serial) missingFields.push('Serial');
+            if (!formData.broadcastTime) missingFields.push('Broadcast Time');
+            if (!formData.period) missingFields.push('Period');
+        }
+
+        if (missingFields.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'ভুল হয়েছে!',
+                text: `নিম্নলিখিত তথ্যগুলি পূরণ করা আবশ্যক: ${missingFields.join(', ')}।`,
+            });
+            return; // Stop form submission if validation fails
+        }
+
         onSave(formData); // Pass the entire formData including programType and conditional fields
         // The parent (TableView) will close the modal on success or handle errors.
     };
@@ -76,7 +107,19 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title }) => {
                         </select>
                     </div>
 
-                    {/* Fields for General Program Type and always visible fields */}
+                    {/* Program Details - ALWAYS VISIBLE */}
+                    <div className="mb-4 sm:mb-6">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">অনুষ্ঠান বিবরণী (Program Details):</label>
+                        <textarea
+                            name="programDetails"
+                            value={formData.programDetails || ''}
+                            onChange={handleChange}
+                            className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent h-20 text-sm sm:text-base"
+                            required={programType !== 'Song'} // Required only for General
+                        ></textarea>
+                    </div>
+
+                    {/* Fields for General Program Type (conditionally visible) */}
                     {programType !== 'Song' && (
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 sm:mb-6">
@@ -102,17 +145,6 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title }) => {
                                         required={programType !== 'Song'} // Required only for General
                                     />
                                 </div>
-                            </div>
-
-                            <div className="mb-4 sm:mb-6">
-                                <label className="block text-gray-700 text-sm font-bold mb-2">অনুষ্ঠান বিবরণী (Program Details):</label>
-                                <textarea
-                                    name="programDetails"
-                                    value={formData.programDetails || ''}
-                                    onChange={handleChange}
-                                    className="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent h-20 text-sm sm:text-base"
-                                    required={programType !== 'Song'} // Required only for General
-                                ></textarea>
                             </div>
 
                             {/* Period field - only visible for General Program Type */}
@@ -195,7 +227,6 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title }) => {
 
                     {/* Hidden fields for day, date, shift - these should always be passed */}
                     <input type="hidden" name="day" value={formData.day || ''} />
-                    <input type="hidden" name="date" value={formData.date || ''} />
                     <input type="hidden" name="shift" value={formData.shift || ''} />
 
 

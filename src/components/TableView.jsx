@@ -21,15 +21,12 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { shift: urlShiftKey } = useParams();
+    const { shift: urlShiftKey, dayKey: urlDayKey } = useParams();
 
     const queryParams = new URLSearchParams(location.search);
-    const dayName = queryParams.get('dayName') ? decodeURIComponent(queryParams.get('dayName')) : 'দিন';
-    const displayDate = queryParams.get('date') ? decodeURIComponent(queryParams.get('date')) : '';
+    const dayName = urlDayKey ? decodeURIComponent(urlDayKey) : 'দিন';
 
-    const formattedBanglaDate = displayDate
-        ? `${new Date(displayDate).toLocaleDateString('bn-BD', { day: 'numeric' })} ${new Date(displayDate).toLocaleDateString('bn-BD', { month: 'long' })}, ${new Date(displayDate).getFullYear()} বঙ্গাব্দ`
-        : 'তারিখ';
+
 
     const banglaShift = urlShiftKey === 'সকাল' ? 'সকাল' : (urlShiftKey === 'বিকাল' ? 'বিকাল' : urlShiftKey);
 
@@ -224,18 +221,16 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 });
                 await Promise.all(updatePromises);
                 Swal.fire('Success', 'তালিকার ক্রম সফলভাবে আপডেট হয়েছে!', 'success');
-            } catch (error) {
+            }
+            catch (error) {
                 console.error('সিরিয়াল/ক্রম আপডেট করতে ব্যর্থ:', error);
                 Swal.fire('Error', 'তালিকার ক্রম আপডেট করতে ব্যর্থ হয়েছে।', 'error');
-                // ত্রুটির ক্ষেত্রে ডেটাবেস থেকে সময়সূচী পুনরায় লোড করার কথা বিবেচনা করুন
-                // উদাহরণস্বরূপ: fetchScheduleData(); যদি আপনার কাছে একটি ফাংশন থাকে
             }
         }
     };
 
     const handleDelete = (indexToDelete) => {
         const itemToDelete = displayedScheduleData[indexToDelete]; // Use displayed data for deletion
-        console.log(itemToDelete);
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -316,13 +311,15 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
     const handleAddNewClick = () => {
         setCurrentEditIndex(null);
+
+
+
         // Populate initial data for the modal
         const baseData = {
             serial: '', // Default to empty string for new entries
             broadcastTime: '',
             programDetails: '',
             day: dayName,
-            date: displayDate,
             shift: banglaShift,
             period: banglaShift, // Initialized with banglaShift
             programType: 'General', // Default program type
@@ -379,7 +376,6 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             // Add new program
             try {
                 payload.day = dayName;
-                payload.date = displayDate;
                 payload.shift = banglaShift;
                 payload.period = payload.period;
                 payload.orderIndex = scheduleData.length; // New item gets the last order index
@@ -445,8 +441,8 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     {/* Dynamic Date/Time/Shift Info on the right */}
                     <div className="flex-1 text-right text-sm mt-4 md:mt-0">
                         <p className="whitespace-nowrap">{dayName}</p>
-                        <p className="border-b border-b-black pb-1 whitespace-nowrap">{formattedBanglaDate} </p>
-                        <p className="whitespace-nowrap">{displayDate} খ্রিষ্টাব্দ ({banglaShift} অধিবেশন)</p>
+                        <p className="border-b border-b-black pb-1 whitespace-nowrap">সজ্ঞসগস </p>
+                        <p className="whitespace-nowrap">দ্দফদ্গ  খ্রিষ্টাব্দ ({banglaShift} অধিবেশন)</p>
                     </div>
                 </div>
             </header>
@@ -593,7 +589,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (item.composer || ' ') : ''}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700 flex items-center gap-2">
                                                         {item.programType === 'Song' ? (
                                                             <>
                                                                 <input
