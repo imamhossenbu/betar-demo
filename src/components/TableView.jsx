@@ -235,6 +235,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
     const handleDelete = (indexToDelete) => {
         const itemToDelete = displayedScheduleData[indexToDelete]; // Use displayed data for deletion
+        console.log(itemToDelete);
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
