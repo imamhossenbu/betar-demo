@@ -13,7 +13,7 @@
   },
   {
     "serial": "২",
-     "shift":"..",
+     "shift":",,",
     "broadcastTime": "০১.৫৫ মি.",
     "programDetails": "ক) উদ্বোধনী ঘোষণা, খ)চলতি অধিবেশনের অনুষ্ঠান পরিচিতি, গ) স্পটঃ অটিজম বিষয়ক সিডি-৭৩২, কাট-০১, স্থিতি-০৩:৩৪ মি (এফ এম)",
     "artist": "",
@@ -24,7 +24,7 @@
   },
   {
     "serial": "৩",
-     "shift":"..",
+     "shift":",,",
     "broadcastTime": "০২.০০ মি.",
     "programDetails": "বাংলা সংবাদঃ ঢাকা থেকে রিলে (এফ এম)",
     "artist": "",
@@ -35,7 +35,7 @@
   },
   {
     "serial": "৪",
-     "shift":"..",
+     "shift":",,",
     "broadcastTime": "০২.০৫ মি.",
     "programDetails": "দেশের গান (শুধুমাত্র এফ এম)",
     "artist": "",
@@ -68,7 +68,7 @@
   },
   {
     "serial": "০৫",
-     "shift":"..",
+     "shift":",,",
     "broadcastTime": "০২.১৫ মি.", 
     "programDetails": "নজরুল সঙ্গীত:নুরুল আমিন চৌধুরী (এফ এম)",
     "artist": " ",
@@ -112,7 +112,7 @@
   },
   {
     "serial": "০৬",
-    "shift":"...",
+    "shift":",,",
     "broadcastTime": "০২.৩০ মি.",
     "programDetails": "আধুনিক গানঃ শাহনাজ রহমাতুল্লাহ(এফ এম)",
     "artist": "",
@@ -158,7 +158,7 @@
  
   {
     "serial": "০৭", 
-     "shift":"...",
+     "shift":",,",
     "broadcastTime": "০২.৪৫ মি.", 
     "programDetails": "চিত্রগীতিঃ ছায়াছবির গানের অনুষ্ঠান(এফ এম)",
     "artist": " ",
@@ -202,7 +202,7 @@
   },
   {
     "serial": "০৮",
-     "shift":"...",
+     "shift":",,",
     "broadcastTime": "০৩.০০ মি.", 
     "programDetails": "বাংলা সংবাদ : ঢাকা থেকে রিলে ( এ এম ও এফ এম তরঙ্গে)", 
     "artist": "",
@@ -213,7 +213,7 @@
   },
   {
     "serial": "০৯",
-     "shift":"...",
+     "shift":",,",
     "broadcastTime": "০৩.০৫ মি.", 
     "programDetails": "পল্লীগীতিঃ শেখ নাছের জামাল",
     "artist": "",
@@ -302,7 +302,7 @@
   
   {
     "serial": "১১",
-    "shift":"...", 
+    "shift":",,", 
     "broadcastTime": "০৩.৩৫ মিঃ", 
     "programDetails": "রবীন্দ্রসঙ্গীতঃ বদরুন্নাহার",
     "artist": "",
