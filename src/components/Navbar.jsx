@@ -66,7 +66,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
 
             Swal.fire('Info', `Loading programs for ${dayName} (${shift}).`, 'info');
 
-            navigate(`/schedule/${dayKey}/${encodeURIComponent(shift)}?dayName=${encodeURIComponent(dayName)}&date=${encodeURIComponent(date)}`);
+            navigate(`/schedule/${dayKey}/${encodeURIComponent(shift)}?dayName=${encodeURIComponent(dayName)}`);
 
         } catch (error) {
             console.error("Error loading programs:", error.response?.data || error.message);
