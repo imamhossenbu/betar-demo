@@ -1,6 +1,6 @@
-// Router.jsx
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AuthContext } from './provider/AuthProvider';
 import TableView from './components/TableView';
 import PrintView from './components/PrintView';
 import ReportView from './components/ReportView';
@@ -10,65 +10,58 @@ import SignupPage from './components/SignupPage';
 import AddSongPage from './components/AddSongPage';
 import Swal from 'sweetalert2';
 import DashboardPage from './pages/DashboardPage';
+import ErrorPage from './pages/ErrorPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import Loading from './components/Loading';
 
 const AppRouter = () => {
+    const { user, loading, logout } = useContext(AuthContext); // ✅ use context logout
     const [scheduleData, setScheduleData] = useState([]);
     const [selectedCeremonies, setSelectedCeremonies] = useState([]);
 
-    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
-    console.log('AppRouter: isAuthenticated initial state:', isAuthenticated);
-
-    const handleLogout = () => {
-        console.log('AppRouter: handleLogout function called.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        console.log('AppRouter: localStorage cleared. Token exists?', !!localStorage.getItem('token'));
-
-        Swal.fire({
-            icon: 'success',
-            title: 'Logged Out!',
-            text: 'You have been successfully logged out.',
-            showConfirmButton: false,
-            timer: 1500
-        }).then(() => {
-            setIsAuthenticated(false);
-            console.log('AppRouter: setIsAuthenticated(false) called.');
-            setScheduleData([]);
-            console.log('AppRouter: All states cleared after logout.');
-        });
+    const handleLogout = async () => {
+        try {
+            await logout(); // ✅ logout handles Firebase and clears token
+            setScheduleData([]); // clear table data
+            Swal.fire({
+                icon: 'success',
+                title: 'Logged Out!',
+                text: 'You have been successfully logged out.',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } catch (err) {
+            Swal.fire('Error!', 'Failed to log out. Try again.', 'error');
+        }
     };
+
+
+    const isAuthenticated = !!user;
 
     const router = createBrowserRouter([
         {
             path: '/login',
-            element: isAuthenticated ? (
-                <Navigate to="/" replace />
-            ) : (
-                <LoginPage setIsAuthenticated={setIsAuthenticated} />
-            ),
+            element: isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />,
         },
         {
             path: '/signup',
-            element: isAuthenticated ? (
-                <Navigate to="/" replace />
-            ) : (
-                <SignupPage />
-            ),
+            element: isAuthenticated ? <Navigate to="/" replace /> : <SignupPage />,
+        },
+        {
+            path: '/forgot-password',
+            element: isAuthenticated ? <Navigate to="/" replace /> : <ForgotPasswordPage />,
         },
         {
             path: '/',
             element: isAuthenticated ? (
-                <Layout
-                    setScheduleData={setScheduleData}
-                    handleLogout={handleLogout}
-                />
+                <Layout setScheduleData={setScheduleData} handleLogout={handleLogout} />
             ) : (
                 <Navigate to="/login" replace />
             ),
             children: [
                 {
                     index: true,
-                    element: <DashboardPage />, // <-- Now renders DashboardPage component
+                    element: <DashboardPage />,
                 },
                 {
                     path: 'schedule/:dayKey/:shift',
@@ -92,6 +85,10 @@ const AppRouter = () => {
                 {
                     path: 'add-song',
                     element: <AddSongPage />,
+                },
+                {
+                    path: '*',
+                    element: <ErrorPage />,
                 },
             ],
         },

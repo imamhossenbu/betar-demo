@@ -1,31 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosPublic from '../axiosPublic';
+
 import Swal from 'sweetalert2';
+import { axiosSecure } from '../useAxiosSecure'
 
 const AddSongPage = () => {
     const navigate = useNavigate();
 
-    const programType = 'Song'; // Fixed as Song
-
-    // Get current date, day, and a default shift for initial form state
-    const today = new Date();
-    const optionsDay = { weekday: 'long' };
-    const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' };
-
-    const currentDayName = today.toLocaleDateString('bn-BD', optionsDay); // Example: 'সোমবার'
-    const currentDate = today.toLocaleDateString('en-CA', optionsDate).replace(/\//g, '-'); // Format YYYY-MM-DD
-    const defaultShift = 'সকাল'; // Default shift for new song entries
+    const programType = 'Song'; // Fixed for this page
 
     const [formData, setFormData] = useState({
+        programDetails: '', // Optional for songs
         artist: '',
         lyricist: '',
         composer: '',
         cdCut: '',
         duration: '',
-        day: currentDayName, // Initialized with current day name
-        date: currentDate, // Initialized with current date
-        shift: defaultShift, // Initialized with a default shift
+        // These fields will be emptied before sending if programType === 'Song'
+        day: '',
+        shift: '',
     });
 
     const [loading, setLoading] = useState(false);
@@ -38,21 +31,18 @@ const AddSongPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Client-side validation for AddSongPage
+        let missingFields = [];
+
         if (!formData.artist.trim()) {
-            Swal.fire('Error', 'শিল্পীর নাম অবশ্যই দিতে হবে।', 'error');
-            return;
+            missingFields.push('Artist');
         }
-        if (!formData.day.trim()) {
-            Swal.fire('Error', 'দিনের নাম আবশ্যক।', 'error');
-            return;
-        }
-        if (!formData.date.trim()) {
-            Swal.fire('Error', 'তারিখ আবশ্যক।', 'error');
-            return;
-        }
-        if (!formData.shift.trim()) {
-            Swal.fire('Error', 'সেশন আবশ্যক।', 'error');
+
+        if (missingFields.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'ভুল হয়েছে!',
+                text: `নিম্নলিখিত তথ্যগুলি পূরণ করা আবশ্যক: ${missingFields.join(', ')}।`,
+            });
             return;
         }
 
@@ -61,18 +51,18 @@ const AddSongPage = () => {
         const payload = {
             ...formData,
             programType,
-            serial: '', // Not required for Song type, send as empty string
-            broadcastTime: '', // Not required for Song type, send as empty string
-            programDetails: 'সঙ্গীত', // Default program details for a song
-            period: formData.shift, // Often period is same as shift
-            orderIndex: 0, // A default orderIndex. This might need dynamic calculation if many songs exist.
-            // However, TableView handles reordering persistently, so a default of 0 is fine for new additions.
+            serial: '',
+            broadcastTime: '',
+            shift: '',
+            day: '',
+            period: '',
+            orderIndex: 0,
         };
 
         try {
-            await axiosPublic.post('/api/programs', payload);
+            await axiosSecure.post('/api/programs', payload);
             Swal.fire('Success!', 'সঙ্গীত সফলভাবে যোগ হয়েছে!', 'success');
-            navigate('/'); // Navigate back to the main table view or dashboard
+            navigate('/');
         } catch (error) {
             console.error('Error adding song:', error.response?.data?.message || error.message);
             Swal.fire('Error!', error.response?.data?.message || 'যোগ করতে ব্যর্থ হয়েছে।', 'error');
@@ -86,6 +76,18 @@ const AddSongPage = () => {
             <h2 className="text-2xl font-bold mb-6 text-center">নতুন সঙ্গীত যোগ করুন</h2>
 
             <form onSubmit={handleSubmit}>
+                {/* Optional program details */}
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">অনুষ্ঠান বিবরণী (Program Details):</label>
+                    <textarea
+                        name="programDetails"
+                        value={formData.programDetails}
+                        onChange={handleChange}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        placeholder="সঙ্গীতের বিস্তারিত বিবরণ (ঐচ্ছিক)"
+                    ></textarea>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                         <label className="block text-gray-700 text-sm font-bold mb-2">শিল্পী (Artist):</label>
@@ -144,11 +146,6 @@ const AddSongPage = () => {
                         className="shadow border rounded w-full py-2 px-3 text-gray-700"
                     />
                 </div>
-
-                {/* Hidden fields for day, date, shift to ensure they are sent with data */}
-                <input type="hidden" name="day" value={formData.day} />
-                <input type="hidden" name="date" value={formData.date} />
-                <input type="hidden" name="shift" value={formData.shift} />
 
                 <div className="flex justify-end space-x-4">
                     <button

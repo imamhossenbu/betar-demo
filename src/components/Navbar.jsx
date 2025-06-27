@@ -1,17 +1,19 @@
 // components/Navbar.jsx
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import axiosPublic from '../axiosPublic';
+import { useState, useContext } from 'react';
+
 import Swal from 'sweetalert2';
+import { AuthContext } from '../provider/AuthProvider';
+import { axiosSecure } from '../useAxiosSecure'
 
 const days = [
-    { name: 'সোমবার', key: 'সোমবার', date: '2025-06-23' },
-    { name: 'মঙ্গলবার', key: 'মঙ্গলবার', date: '2025-06-24' },
-    { name: 'বুধবার', key: 'বুধবার', date: '2025-06-25' },
-    { name: 'বৃহস্পতিবার', key: 'বৃহস্পতিবার', date: '2025-06-26' },
-    { name: 'শুক্রবার', key: 'শুক্রবার', date: '2025-06-27' },
-    { name: 'শনিবার', key: 'শনিবার', date: '2025-06-28' },
-    { name: 'রবিবার', key: 'রবিবার', date: '2025-06-29' },
+    { name: 'সোমবার', key: 'সোমবার' },
+    { name: 'মঙ্গলবার', key: 'মঙ্গলবার' },
+    { name: 'বুধবার', key: 'বুধবার' },
+    { name: 'বৃহস্পতিবার', key: 'বৃহস্পতিবার' },
+    { name: 'শুক্রবার', key: 'শুক্রবার' },
+    { name: 'শনিবার', key: 'শনিবার' },
+    { name: 'রবিবার', key: 'রবিবার' },
 ];
 
 const Navbar = ({ setScheduleData, handleLogout }) => {
@@ -19,7 +21,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
 
-    const loggedInUserId = localStorage.getItem('userId');
+    const { user } = useContext(AuthContext); // Get current logged in user from context
 
     const toggleDropdown = (key) => {
         setOpenDay(openDay === key ? null : key);
@@ -48,14 +50,20 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
 
         const { name: dayName } = dayDetails;
 
-        if (!loggedInUserId) {
+        if (!user) {
+            console.log('Navbar - No user when trying to load programs, navigating to login.'); // Add this
             Swal.fire('Error', 'Please log in to view programs.', 'error');
             navigate('/login');
             return;
         }
+        console.log(`Navbar - Attempting to load programs for ${dayName} (${shift})`); // Add this
+
 
         try {
-            const programsResponse = await axiosPublic.get(
+            const dat = await axiosSecure.get('/api/debug');
+            console.log(dat);
+
+            const programsResponse = await axiosSecure.get(
                 `/api/programs?day=${encodeURIComponent(dayName)}&shift=${encodeURIComponent(shift)}`
             );
             setScheduleData(programsResponse.data);
@@ -76,17 +84,17 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
         }
     };
 
-    const onLogoutClick = () => {
-        handleLogout();
-        closeMobileMenu();
+    const handleLogoutClick = () => {
+        handleLogout(); // Calls your passed logout function
+        navigate('/login');
     };
 
     return (
         <nav className="bg-blue-100 py-4 px-6 shadow mb-6 flex items-center justify-between font-[kalpurush] relative">
             <div className="flex items-center flex-shrink-0">
-                <NavLink to="/" className="text-blue-800 font-bold text-2xl whitespace-nowrap" onClick={closeMobileMenu}>
-                    <img src="https://placehold.co/40x40/000000/FFFFFF?text=Logo" alt="Betar Logo" className="h-10 w-10 mr-2 inline-block rounded-md" />
-                    বেতার
+                <NavLink to="/" className="text-blue-800 font-bold text-2xl whitespace-nowrap flex items-center" onClick={closeMobileMenu}>
+                    <img src="/logo.png" alt="Betar Logo" className="h-10 w-10 mr-2 inline-block rounded-md" />
+                    ই-কিউশীট
                 </NavLink>
             </div>
 
@@ -110,7 +118,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
                 flex-col w-full py-4 md:py-0 px-6 md:px-0
                 z-40
             `}>
-                <div className="flex flex-col md:flex-row gap-2 sm:gap-4 md:justify-start md:flex-grow mb-4 md:mb-0">
+                <div className="flex flex-col md:flex-row gap-2 sm:gap-4 md:justify-center md:flex-grow mb-4 md:mb-0">
                     {days.map((day) => (
                         <div key={day.key} className="relative">
                             <button
@@ -138,10 +146,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
                     <NavLink to="/" className="text-blue-800 font-semibold hover:bg-blue-200 px-3 py-1.5 rounded-md text-sm md:text-base w-full text-center" onClick={closeMobileMenu}>
                         ড্যাশবোর্ড
                     </NavLink>
-                    <NavLink to="/add-song" className="text-green-600 font-semibold hover:bg-green-100 px-3 py-1.5 rounded-md text-sm md:text-base w-full text-center" onClick={closeMobileMenu}>
-                        নতুন সঙ্গীত যোগ করুন
-                    </NavLink>
-                    <button onClick={onLogoutClick} className="text-red-600 font-semibold hover:bg-red-100 px-3 py-1.5 rounded-md text-sm md:text-base w-full text-center">
+                    <button onClick={handleLogoutClick} className="text-red-600 font-semibold hover:bg-red-100 px-3 py-1.5 rounded-md text-sm md:text-base w-full text-center">
                         লগআউট
                     </button>
                 </div>

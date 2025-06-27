@@ -5,7 +5,8 @@ import { FaEdit } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import axiosPublic from '../axiosPublic'; // আপনার আসল axiosPublic ব্যবহার করা হয়েছে
+import { axiosSecure } from '../useAxiosSecure'
+
 
 const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,7 +88,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
             debounceTimeoutRefs.current[index] = setTimeout(async () => {
                 try {
-                    const response = await axiosPublic.get(`/api/songs/byCdCut/${newCdCut}`);
+                    const response = await axiosSecure.get(`/api/songs/byCdCut/${newCdCut}`);
                     if (response.data) {
                         setScheduleData(prevSchedule => {
                             const updatedSchedule = [...prevSchedule];
@@ -217,7 +218,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             try {
                 const updatePromises = updatesForBackend.map(update => {
                     const { _id, ...fieldsToUpdate } = update; // _id আলাদা করুন
-                    return axiosPublic.put(`/api/programs/${_id}`, fieldsToUpdate);
+                    return axiosSecure.put(`/api/programs/${_id}`, fieldsToUpdate);
                 });
                 await Promise.all(updatePromises);
                 Swal.fire('Success', 'তালিকার ক্রম সফলভাবে আপডেট হয়েছে!', 'success');
@@ -242,7 +243,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axiosPublic.delete(`/api/programs/${itemToDelete._id}`);
+                    await axiosSecure.delete(`/api/programs/${itemToDelete._id}`);
                     const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete); // Filter original scheduleData
 
                     let serialCounter = 1;
@@ -278,7 +279,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                         try {
                             const updatePromises = updatesForBackendAfterDelete.map(update => {
                                 const { _id, ...fieldsToUpdate } = update;
-                                return axiosPublic.put(`/api/programs/${_id}`, fieldsToUpdate);
+                                return axiosSecure.put(`/api/programs/${_id}`, fieldsToUpdate);
                             });
                             await Promise.all(updatePromises);
                             // console.log("Backend orderIndexes updated after deletion.");
@@ -356,7 +357,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 // Ensure orderIndex is maintained when updating
                 payload.orderIndex = scheduleData[currentEditIndex].orderIndex;
 
-                await axiosPublic.put(`/api/programs/${scheduleData[currentEditIndex]._id}`, payload);
+                await axiosSecure.put(`/api/programs/${scheduleData[currentEditIndex]._id}`, payload);
                 const updatedSchedule = [...scheduleData];
                 // Local state update: ensure serial is Bengali for display after successful save
                 updatedSchedule[currentEditIndex] = {
@@ -387,7 +388,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     payload.serial = String(payload.serial || '');
                 }
 
-                const res = await axiosPublic.post('/api/programs', payload);
+                const res = await axiosSecure.post('/api/programs', payload);
                 // After adding, ensure serial is Bengali for local state, as backend might return English
                 const newProgram = {
                     ...res.data,
@@ -589,7 +590,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (item.composer || ' ') : ''}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700 flex items-center gap-2">
+                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (
                                                             <>
                                                                 <input
