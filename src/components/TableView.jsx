@@ -6,6 +6,7 @@ import { MdDelete } from 'react-icons/md';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { axiosSecure } from '../useAxiosSecure'
+import { axiosPublic } from '../useAxiosPublic'
 
 
 const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies }) => {
@@ -243,7 +244,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axiosSecure.delete(`/api/programs/${itemToDelete._id}`);
+                    await axiosPublic.delete(`/api/programs/${itemToDelete._id}`);
                     const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete); // Filter original scheduleData
 
                     let serialCounter = 1;
