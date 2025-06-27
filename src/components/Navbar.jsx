@@ -60,8 +60,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
 
 
         try {
-            const dat = await axiosSecure.get('/api/debug');
-            console.log(dat);
+
 
             const programsResponse = await axiosSecure.get(
                 `/api/programs?day=${encodeURIComponent(dayName)}&shift=${encodeURIComponent(shift)}`
