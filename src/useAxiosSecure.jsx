@@ -6,12 +6,10 @@ import { AuthContext } from './provider/AuthProvider'
 
 // ✅ Axios instance
 const axiosSecure = axios.create({
-  baseURL:
-    process.env.NODE_ENV === 'development'
-      ? import.meta.env.VITE_API_BASE_URL
-      : 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
+
 
 // ✅ Custom hook that uses the same instance
 const useAxiosSecure = () => {

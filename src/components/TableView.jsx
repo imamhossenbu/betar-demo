@@ -6,8 +6,6 @@ import { MdDelete } from 'react-icons/md';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { axiosSecure } from '../useAxiosSecure'
-// import axiosPublic from '../useAxiosPublic'
-import useAxiosPublic from '../useAxiosPublic';
 
 
 const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies }) => {
@@ -21,7 +19,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
     // নতুন স্টেট যা প্রদর্শনের জন্য বাংলা সিরিয়াল সহ ডেটা রাখবে
     const [displayedScheduleData, setDisplayedScheduleData] = useState([]);
-    const axiosPublic = useAxiosPublic();
+
     const navigate = useNavigate();
     const location = useLocation();
     const { shift: urlShiftKey, dayKey: urlDayKey } = useParams();
@@ -245,7 +243,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axiosPublic.delete(`/api/programs/${itemToDelete._id}`);
+                    await axiosSecure.delete(`/api/programs/${itemToDelete._id}`);
                     const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete); // Filter original scheduleData
 
                     let serialCounter = 1;
@@ -293,7 +291,6 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
                 } catch (error) {
                     Swal.fire('Error!', 'Failed to delete entry.', 'error');
-                    console.log(error);
                 }
             }
         });
