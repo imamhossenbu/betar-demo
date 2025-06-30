@@ -43,14 +43,14 @@ const LoginPage = () => {
     if (loading) return <Loading />;
 
     return (
-        <div className="bg-gradient-to-br from-gray-100 to-blue-200 flex items-center justify-center font-[kalpurush] p-4 sm:p-6 lg:p-8">
+        <div className="bg-gradient-to-br from-gray-100 to-blue-200 flex items-center justify-center font-[kalpurush]  sm:p-6 lg:p-8">
             <div className="flex flex-col md:flex-row w-full max-w-5xl bg-white rounded-xl shadow-2xl overflow-hidden">
                 {/* Left Panel */}
                 <div className="md:w-1/2 bg-yellow-200 text-black flex flex-col items-center justify-center text-center p-6">
                     <div className="bg-white rounded-full p-4 shadow-xl mb-6">
                         <img src="/logo.png" alt="Bangladesh Betar Logo" className="h-32 w-32 rounded-full object-contain" />
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-extrabold mb-2 leading-tight">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</h2>
+                    <h2 className="text-2xl md:text-3xl font-extrabold mb-2 leading-tight">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</h2>
                     <h3 className="text-xl sm:text-2xl font-semibold mt-1">বাংলাদেশ বেতার</h3>
                     <p className="mt-4 text-base opacity-90">আপনার দৈনিক কর্মসূচী সহজে পরিচালনা করুন।</p>
                 </div>
