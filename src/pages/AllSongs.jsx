@@ -138,22 +138,28 @@ const AllSongs = () => {
                         {filteredSongs.map((song, index) => (
                             <tr key={song._id} className="hover:bg-gray-50 text-sm text-center">
                                 <td className="px-4 py-3 border border-gray-300 ">{toBanglaNumber(index + 1)}</td>
-                                <td className="px-4 py-3 border border-gray-300 text-left ">{song.programDetails}</td>
+                                <td className="px-4 py-3 border border-gray-300 text-left ">
+                                    <div className="flex flex-col space-y-0.5">
+                                        {(song.programDetails || '').split(',').map((item, idx) => (
+                                            <span key={idx}>{item.trim()}</span>
+                                        ))}
+                                    </div>
+                                </td>
                                 <td className="px-4 py-3 border border-gray-300 ">{song.artist}</td>
                                 <td className="px-4 py-3 border border-gray-300 ">{song.lyricist}</td>
                                 <td className="px-4 py-3 border border-gray-300 ">{song.composer}</td>
                                 <td className="px-4 py-3 border border-gray-300 ">{song.cdCut}</td>
                                 <td className="px-4 py-3 border border-gray-300 ">{song.duration}</td>
-                                <td className="px-4 py-3 border border-gray-300 space-x-2">
+                                <td className="px-3 py-3 border border-gray-300 space-x-2">
                                     <button
                                         onClick={() => handleEdit(song)}
-                                        className="bg-green-500 hover:bg-green-300   text-black text-base px-3 py-3 rounded-full"
+                                        className="bg-green-500 hover:bg-green-300   text-black text-base px-2 py-2 rounded-full"
                                     >
                                         <FaEdit />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(song._id)}
-                                        className="bg-red-500 hover:bg-red-600 text-white text-base px-3 py-3 rounded-full"
+                                        className="bg-red-500 hover:bg-red-600 text-white text-base px-2 py-2 rounded-full"
                                     >
                                         <MdDelete />
                                     </button>
