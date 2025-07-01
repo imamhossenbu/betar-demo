@@ -26,19 +26,22 @@ const PrintView = () => {
                     <table className="table-auto border-collapse w-full border border-gray-300">
                         <thead className="bg-gray-100">
                             <tr>
-                                <th className="border border-gray-300 px-4 py-2 text-left">প্রচার সময়</th>
-                                <th className="border border-gray-300 px-4 py-2 text-left">অনুষ্ঠানের নাম</th>
+                                <th className="border border-gray-300 px-4 py-2 text-center">অনুষ্ঠানের নাম</th>
+                                <th className="border border-gray-300 px-4 py-2 text-center">শুনতে পাবেন</th>
+                                <th className="border border-gray-300 px-4 py-2 text-center">প্রচার সময়</th>
                             </tr>
                         </thead>
                         <tbody>
                             {selectedRows.map((item, index) => (
                                 <tr key={index}>
-                                    <td className="border border-gray-300 px-4 py-2">{item.broadcastTime || '-'}</td>
+
                                     <td className="border border-gray-300 px-4 py-2">
                                         {item.programDetails?.split(',').map((name, i) => (
                                             <p key={i}>{name.trim()}</p>
                                         ))}
                                     </td>
+                                    <td className="border border-gray-300 px-4 py-2 text-center">,,</td>
+                                    <td className="border border-gray-300 px-4 py-2">{item.broadcastTime || '-'}</td>
                                 </tr>
                             ))}
                         </tbody>

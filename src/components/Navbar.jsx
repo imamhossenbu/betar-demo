@@ -89,7 +89,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
     };
 
     return (
-        <nav className="bg-blue-100 py-4 px-6 shadow mb-6 flex items-center justify-between font-[kalpurush] relative">
+        <nav className="bg-blue-100 py-4 px-6 shadow mb-6 flex items-center justify-between font-[kalpurush] relative print:hidden">
             <div className="flex items-center flex-shrink-0">
                 <NavLink to="/" className="text-blue-800 font-bold text-2xl whitespace-nowrap flex items-center" onClick={closeMobileMenu}>
                     <img src="/logo.png" alt="Betar Logo" className="h-10 w-10 mr-2 inline-block rounded-md" />

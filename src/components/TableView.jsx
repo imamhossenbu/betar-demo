@@ -425,7 +425,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     };
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-4 sm:p-6 w-full mx-auto font-[kalpurush] max-w-full lg:max-w-[1800px]">
+        <div className="bg-white shadow-lg rounded-xl p-4 sm:p-6 w-full mx-auto font-[kalpurush] max-w-full lg:max-w-[1700px]">
             <header className="mb-6">
                 <div className="flex flex-col md:flex-row justify-between items-center mt-6 md:mt-12 text-center md:text-left">
                     {/* Empty div for spacing on left */}
@@ -465,64 +465,64 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             <div className="overflow-x-auto rounded-lg border border-gray-200 mb-4">
                 <table border="1" className="min-w-[1200px] lg:min-w-[1500px] divide-y table-auto w-full divide-gray-200">
                     <thead className="bg-gray-50">
-                        <tr>
+                        <tr >
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 rounded-tl-lg whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 rounded-tl-lg whitespace-nowrap"
                             >
                                 ক্রমিক
                             </th>
                             <th colSpan={2}
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 প্রচার সময়
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 w-[180px] sm:w-[200px] text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 w-[180px] sm:w-[200px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 অনুষ্ঠান বিবরণী
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 শিল্পী
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 গীতিকার
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 সুরকার
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 সিডি ও কাট
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 স্থিতি
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 প্রচার মন্তব্য
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-left text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
                             >
                                 ডি/ও স্বাক্ষর
                             </th>
@@ -549,13 +549,13 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                                                         } hover:bg-gray-100 transition-colors duration-200`}
                                                 >
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
+                                                    <td className="py-3 px-2 border border-gray-300 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                                         {item.serial || ' '}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
+                                                    <td className="py-3 px-2 border border-gray-300 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                                         {item.period || ' '} {/* Displaying Period here */}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-3 px-2 border border-gray-300 text-center whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.broadcastTime || ' '}
                                                     </td>
 
