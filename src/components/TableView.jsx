@@ -13,6 +13,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [modalInitialData, setModalInitialData] = useState({});
 
+
     // প্রতি রো-এর জন্য CD Cut অনুসন্ধানের লোডিং অবস্থা ট্র্যাক করার জন্য নতুন স্টেট
     const [loadingCdCutIndex, setLoadingCdCutIndex] = useState(null);
     const debounceTimeoutRefs = useRef({}); // প্রতিটি রো-এর জন্য ডিবাউন্স টাইমআউট রেফারেন্স সংরক্ষণ করার জন্য
@@ -425,25 +426,25 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     };
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-4 sm:p-6 w-full mx-auto font-[kalpurush] max-w-full lg:max-w-[1700px]">
+        <div className="bg-white shadow-lg rounded-xl p-2 sm:p-3 w-full mx-auto font-[kalpurush] max-w-full lg:max-w-[1700px]">
             <header className="mb-6">
-                <div className="flex flex-col md:flex-row justify-between items-center mt-6 md:mt-12 text-center md:text-left">
+                <div className="flex flex-col md:flex-row justify-between items-center mt-3 text-center md:text-left">
                     {/* Empty div for spacing on left */}
                     <div className="flex-1 hidden md:block"></div>
 
                     {/* Central Government/Radio Info */}
-                    <div className="flex-none w-full md:w-auto text-sm mb-4 md:mb-0">
+                    <div className="flex-none text-center w-full md:w-auto text-sm mb-4 md:mb-0">
                         <p>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
                         <p>বাংলাদেশ বেতার, বরিশাল।</p>
                         <p><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">এপঃ</span> Bangladesh Betar</p>
-                        <p className="border-b border-b-black pb-1">ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
+                        <p className="">ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
                     </div>
 
                     {/* Dynamic Date/Time/Shift Info on the right */}
                     <div className="flex-1 text-right text-sm mt-4 md:mt-0">
-                        <p className="whitespace-nowrap">{dayName}</p>
-                        <p className="border-b border-b-black pb-1 whitespace-nowrap">সজ্ঞসগস </p>
-                        <p className="whitespace-nowrap">দ্দফদ্গ  খ্রিষ্টাব্দ ({banglaShift} অধিবেশন)</p>
+                        <p contentEditable suppressContentEditableWarning className="whitespace-nowrap ">{dayName}</p>
+                        <p contentEditable suppressContentEditableWarning className=" whitespace-nowrap">১২ আষাঢ়, ১৪৩২ বঙ্গাব্দ </p>
+                        <p contentEditable suppressContentEditableWarning className="whitespace-nowrap">০১/০৭/২০২৫ খ্রিস্টাব্দ</p>
                     </div>
                 </div>
             </header>
@@ -453,9 +454,9 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 <table className="min-w-full md:min-w-0 border-collapse border border-black mx-auto text-sm">
                     <thead>
                         <tr>
-                            <td className="border border-black px-2 py-1 whitespace-nowrap">অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ </td>
-                            <td className="border border-black px-2 py-1 whitespace-nowrap">অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান </td>
-                            <td className="border border-black px-2 py-1 whitespace-nowrap">ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন</td>
+                            <td contentEditable suppressContentEditableWarning className="border border-black px-2 py-1 whitespace-nowrap">অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ </td>
+                            <td contentEditable suppressContentEditableWarning className="border border-black px-2 py-1 whitespace-nowrap">অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান </td>
+                            <td contentEditable suppressContentEditableWarning className="border border-black px-2 py-1 whitespace-nowrap">ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন</td>
                         </tr>
                     </thead>
                 </table>
@@ -681,17 +682,17 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
             <footer className='flex flex-col sm:flex-row items-center justify-between my-10 sm:my-28 text-xs sm:text-sm text-center sm:text-left space-y-4 sm:space-y-0'>
                 <div className='w-full sm:w-auto'>
-                    <p>মো. ফারুক হাওলাদার</p>
-                    <p>টেপরেকর্ড লাইব্রেরীয়ান</p>
+                    <p contentEditable suppressContentEditableWarning>মো. ফারুক হাওলাদার</p>
+                    <p contentEditable suppressContentEditableWarning>টেপরেকর্ড লাইব্রেরীয়ান</p>
                 </div>
                 <div className='w-full sm:w-auto'>
-                    <p>হাসনাইন ইমতিয়াজ</p>
-                    <p>সহকারী পরিচালক(অনুষ্ঠান)</p>
+                    <p contentEditable suppressContentEditableWarning>হাসনাইন ইমতিয়াজ</p>
+                    <p contentEditable suppressContentEditableWarning>সহকারী পরিচালক(অনুষ্ঠান)</p>
                 </div>
                 <div className='w-full sm:w-auto'>
-                    <p>মো. রফিকুল ইসলাম </p>
-                    <p>উপ-আঞ্চলিক পরিচালক </p>
-                    <p>আঞ্চলিক পরিচালকের পক্ষে </p>
+                    <p contentEditable suppressContentEditableWarning>মো. রফিকুল ইসলাম </p>
+                    <p contentEditable suppressContentEditableWarning>উপ-আঞ্চলিক পরিচালক </p>
+                    <p contentEditable suppressContentEditableWarning>আঞ্চলিক পরিচালকের পক্ষে </p>
                 </div>
             </footer>
         </div>
