@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { axiosSecure } from '../useAxiosSecure';
 import EntryModal from '../components/EntryModal';
+import { FaEdit } from 'react-icons/fa';
+import { MdDelete } from 'react-icons/md';
 
 const AllSongs = () => {
     const [songs, setSongs] = useState([]);
@@ -88,72 +90,88 @@ const AllSongs = () => {
         }
     };
 
-    // Normalize Bengali text for better matching
     const normalize = (str) => str?.normalize('NFC').toLowerCase();
 
-    const filteredSongs = songs.filter(song =>
-        normalize(song.programDetails).includes(normalize(searchTerm))
-    );
+    const filteredSongs = searchTerm
+        ? songs.filter(song =>
+            normalize(song.programDetails || '').includes(normalize(searchTerm))
+        )
+        : songs;
 
     return (
         <div className="p-6 font-[kalpurush]">
-            <h2 className="text-2xl font-bold mb-4 text-green-700 text-center">সকল সঙ্গীত তালিকা</h2>
+            {/* Styled Header */}
+            <div className="text-center mb-6">
+                <h2 className="text-3xl font-bold text-green-700 mb-1">
+                    🎵 সকল সঙ্গীত তালিকা
+                </h2>
+                <p className="text-sm text-gray-600">সকল গান দেখুন, এডিট ও ডিলিট করুন</p>
+            </div>
 
             {/* Search bar */}
-            <div className="mb-4 text-center">
+            <div className="mb-6 text-center">
                 <input
                     type="text"
-                    placeholder="গানের নাম দিয়ে অনুসন্ধান করুন..."
+                    placeholder="🔍 গানের নাম দিয়ে অনুসন্ধান করুন..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border border-gray-300 px-4 py-2 rounded w-full max-w-md"
+                    className="border border-gray-300 text-sm px-4 py-2 rounded shadow-sm w-full max-w-md focus:outline-none focus:ring-2 focus:ring-green-300"
                 />
             </div>
 
+            {/* Table */}
             <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border border-gray-300">
+                <table className="min-w-full border-collapse shadow-sm ">
                     <thead>
-                        <tr className="bg-gray-100 text-left">
-                            <th className="p-3 border">#</th>
-                            <th className="p-3 border">গানের নাম</th>
-                            <th className="p-3 border">শিল্পী</th>
-                            <th className="p-3 border">সিডি/কাট</th>
-                            <th className="p-3 border">অ্যাকশন</th>
+                        <tr className="bg-green-100 text-sm">
+                            <th className="px-4 py-3 border border-gray-300  text-center">#</th>
+                            <th className="px-4 py-3 border border-gray-300  text-left">গানের নাম</th>
+                            <th className="px-4 py-3 border  border-gray-300 text-center">শিল্পী</th>
+                            <th className="px-4 py-3 border  border-gray-300 text-center">গীতিকার</th>
+                            <th className="px-4 py-3 border  border-gray-300 text-center">সুরকার</th>
+                            <th className="px-4 py-3 border  border-gray-300 text-center">সিডি/কাট</th>
+                            <th className="px-4 py-3 border  border-gray-300 text-center">স্থিতি</th>
+                            <th className="px-4 py-3 border border-gray-300  text-center">অ্যাকশন</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredSongs.map((song, index) => (
-                            <tr key={song._id} className="hover:bg-gray-50">
-                                <td className="p-3 border">{toBanglaNumber(index + 1)}</td>
-                                <td className="p-3 border">{song.programDetails}</td>
-                                <td className="p-3 border">{song.artist}</td>
-                                <td className="p-3 border">{song.cdCut}</td>
-                                <td className="p-3 border space-x-2">
+                            <tr key={song._id} className="hover:bg-gray-50 text-sm text-center">
+                                <td className="px-4 py-3 border border-gray-300 ">{toBanglaNumber(index + 1)}</td>
+                                <td className="px-4 py-3 border border-gray-300 text-left ">{song.programDetails}</td>
+                                <td className="px-4 py-3 border border-gray-300 ">{song.artist}</td>
+                                <td className="px-4 py-3 border border-gray-300 ">{song.lyricist}</td>
+                                <td className="px-4 py-3 border border-gray-300 ">{song.composer}</td>
+                                <td className="px-4 py-3 border border-gray-300 ">{song.cdCut}</td>
+                                <td className="px-4 py-3 border border-gray-300 ">{song.duration}</td>
+                                <td className="px-4 py-3 border border-gray-300 space-x-2">
                                     <button
                                         onClick={() => handleEdit(song)}
-                                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                                        className="bg-green-500 hover:bg-green-300   text-black text-base px-3 py-3 rounded-full"
                                     >
-                                        এডিট
+                                        <FaEdit />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(song._id)}
-                                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                                        className="bg-red-500 hover:bg-red-600 text-white text-base px-3 py-3 rounded-full"
                                     >
-                                        ডিলিট
+                                        <MdDelete />
                                     </button>
                                 </td>
                             </tr>
                         ))}
                         {filteredSongs.length === 0 && (
                             <tr>
-                                <td colSpan="5" className="text-center p-4 text-gray-500">কোন গান পাওয়া যায়নি।</td>
+                                <td colSpan="8" className="text-center p-4 text-gray-500">
+                                    কোন গান পাওয়া যায়নি।
+                                </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
             </div>
 
-            {/* Entry Modal for Edit */}
+            {/* Entry Modal */}
             {isModalOpen && (
                 <EntryModal
                     isOpen={isModalOpen}

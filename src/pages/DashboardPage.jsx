@@ -12,6 +12,21 @@ const DashboardPage = () => {
         navigate('/all-songs');
     };
 
+    const handleNavigateToTodayProgram = () => {
+        const daysInBangla = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+        const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+        const now = new Date();
+        const hour = now.getHours();
+        const dayIndex = now.getDay(); // Sunday = 0
+
+        const currentDayKey = dayKeys[dayIndex];
+        const currentDayBangla = daysInBangla[dayIndex];
+        const shift = hour >= 6 && hour < 14 ? 'সকাল' : 'বিকাল';
+
+        navigate(`/schedule/${currentDayBangla}/${shift}`);
+    };
+
     return (
         <div className="bg-white shadow-lg rounded-xl p-6 w-full mx-auto font-[kalpurush] text-gray-800">
             <h2 className="text-3xl font-bold mb-6 text-center text-blue-700">স্বাগতম, ড্যাশবোর্ড!</h2>
@@ -24,7 +39,7 @@ const DashboardPage = () => {
                     <h3 className="text-xl font-semibold mb-2">দৈনিক প্রোগ্রাম দেখুন</h3>
                     <p className="text-gray-600 mb-4">দিনের শিফট অনুযায়ী আপনার কিউ শিট দেখুন এবং পরিচালনা করুন।</p>
                     <button
-                        onClick={() => navigate('/schedule/mon/সকাল')}
+                        onClick={handleNavigateToTodayProgram}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
                     >
                         প্রোগ্রাম শুরু করুন

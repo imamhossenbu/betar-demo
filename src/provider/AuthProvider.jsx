@@ -7,6 +7,7 @@ import {
     updateProfile,
     GoogleAuthProvider,
     onAuthStateChanged,
+    sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth } from '../../firebase.config';
 import Swal from 'sweetalert2';
@@ -54,6 +55,9 @@ const AuthProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
+    };
+    const resetPassword = (email) => {
+        return sendPasswordResetEmail(auth, email);
     };
 
     const googleLogin = () => {
@@ -117,6 +121,7 @@ const AuthProvider = ({ children }) => {
         logout,
         manageProfile,
         googleLogin,
+        resetPassword
     };
 
     return (
