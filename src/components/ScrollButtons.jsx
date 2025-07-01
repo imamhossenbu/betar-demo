@@ -37,7 +37,7 @@ const ScrollButtons = () => {
     }, []);
 
     return (
-        <div className="fixed bottom-4 right-4 z-50 flex flex-col space-y-2">
+        <div className="fixed bottom-4 print:hidden right-4 z-50 flex flex-col space-y-2">
             {isVisible && (
                 <>
                     <button

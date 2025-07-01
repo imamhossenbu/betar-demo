@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import EntryModal from './EntryModal'; // Assuming EntryModal is in the same directory
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaRegFileAlt } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -425,10 +425,14 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         navigate('/print', { state: { selectedRows: selectedCeremonies } });
     };
 
+    const handlePrint = () => {
+        window.print();
+    }
+
     return (
-        <div className="bg-white shadow-lg rounded-xl p-2 sm:p-3 w-full mx-auto font-[kalpurush] max-w-full lg:max-w-[1700px]">
-            <header className="mb-6">
-                <div className="flex flex-col md:flex-row justify-between items-center mt-3 text-center md:text-left">
+        <div className="bg-white p-2 sm:p-3 w-full font-[kalpurush]  overflow-x-auto print:overflow-visible print:w-auto print:mx-auto print:max-w-none">
+            <header className="mb-6 w-full">
+                <div className="flex flex-col md:flex-row justify-between items-center mt-3 text-center md:text-right overflow-x-auto print:overflow-visible">
                     {/* Empty div for spacing on left */}
                     <div className="flex-1 hidden md:block"></div>
 
@@ -441,7 +445,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     </div>
 
                     {/* Dynamic Date/Time/Shift Info on the right */}
-                    <div className="flex-1 text-right text-sm mt-4 md:mt-0">
+                    <div className="flex-1 text-center md:text-right text-sm mt-4 md:mt-0">
                         <p contentEditable suppressContentEditableWarning className="whitespace-nowrap ">{dayName}</p>
                         <p contentEditable suppressContentEditableWarning className=" whitespace-nowrap">১২ আষাঢ়, ১৪৩২ বঙ্গাব্দ </p>
                         <p contentEditable suppressContentEditableWarning className="whitespace-nowrap">০১/০৭/২০২৫ খ্রিস্টাব্দ</p>
@@ -450,8 +454,8 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             </header>
 
             {/* Officer/Supervisor/Announcer Table */}
-            <div className="overflow-x-auto mb-4">
-                <table className="min-w-full md:min-w-0 border-collapse border border-black mx-auto text-sm">
+            <div className="overflow-x-auto print:overflow-visible mx-auto mb-4">
+                <table className="min-w-full border-collapse border border-black mx-auto text-sm w-full print:w-full print:min-w-full">
                     <thead>
                         <tr>
                             <td contentEditable suppressContentEditableWarning className="border border-black px-2 py-1 whitespace-nowrap">অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ </td>
@@ -463,8 +467,8 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             </div>
 
             {/* Main Program Table */}
-            <div className="overflow-x-auto rounded-lg border border-gray-200 mb-4">
-                <table border="1" className="min-w-[1200px] lg:min-w-[1500px] divide-y table-auto w-full divide-gray-200">
+            <div className="overflow-x-auto print:overflow-visible rounded-lg border border-gray-200 mb-4">
+                <table border="1" className="w-full table-auto border-collapse border border-black divide-y divide-gray-200 print:w-full print:min-w-full print:max-w-none">
                     <thead className="bg-gray-50">
                         <tr >
                             <th
@@ -529,7 +533,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider rounded-tr-lg whitespace-nowrap"
+                                className="py-3 print:hidden px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider rounded-tr-lg whitespace-nowrap"
                             >
                                 Action
                             </th>
@@ -569,7 +573,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                                         ceremony._id === item._id
                                                                 )}
                                                                 onChange={() => handleCheckboxChange(item)}
-                                                                className="mt-0.5 sm:mt-1.5 h-3 w-3 sm:h-4 sm:w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                className="mt-0.5 sm:mt-1.5 h-3 w-3 sm:h-4 sm:w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded print:hidden"
                                                             />
 
                                                             <span className="flex flex-col flex-grow">
@@ -617,27 +621,27 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     </td>
                                                     <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
+                                                    <td className="py-3 print:hidden px-2 border border-gray-300 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
                                                         <button
                                                             type="button"
                                                             onClick={() => handleEdit(index)}
-                                                            className="text-white mr-1 px-1.5 py-1.5 rounded-full bg-black border border-white hover:bg-gray-800 transition-colors text-base sm:text-xl"
+                                                            className="text-white mr-1 px-1.5 py-1.5 rounded-full bg-black border border-white hover:bg-gray-800 transition-colors text-base sm:text-md"
                                                         >
                                                             <FaEdit />
                                                         </button>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleDelete(index)}
-                                                            className="text-red-600 hover:text-red-900 px-1.5 py-1.5 rounded-full border border-red-600 hover:bg-red-50 transition-colors text-base sm:text-xl"
+                                                            className="text-red-600 hover:text-red-900 px-1.5 py-1.5 rounded-full border border-red-600 hover:bg-red-50 transition-colors text-base sm:text-md"
                                                         >
                                                             <MdDelete />
                                                         </button>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleShowReport(item)}
-                                                            className="text-blue-600 hover:text-blue-800 px-1.5 py-0.5 border border-blue-600 rounded-full hover:bg-blue-50 transition-colors ml-1 text-xs sm:text-sm"
+                                                            className="text-blue-600 hover:text-blue-800 px-1.5 py-1.5 border border-blue-600 rounded-full hover:bg-blue-50 transition-colors ml-1 text-base sm:text-md"
                                                         >
-                                                            Report
+                                                            <FaRegFileAlt />
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -652,7 +656,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 </table>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
+            <div className="flex print:hidden flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
                 <button
                     type="button"
                     onClick={handleAddNewClick}
@@ -680,7 +684,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 currentProgramType={currentEditIndex !== null ? scheduleData[currentEditIndex].programType : 'General'}
             />
 
-            <footer className='flex flex-col sm:flex-row items-center justify-between my-10 sm:my-28 text-xs sm:text-sm text-center sm:text-left space-y-4 sm:space-y-0'>
+            <footer className="flex flex-col sm:flex-row items-center justify-between my-10 sm:my-20 text-xs sm:text-sm text-center sm:text-left space-y-4 sm:space-y-0">
                 <div className='w-full sm:w-auto'>
                     <p contentEditable suppressContentEditableWarning>মো. ফারুক হাওলাদার</p>
                     <p contentEditable suppressContentEditableWarning>টেপরেকর্ড লাইব্রেরীয়ান</p>
@@ -695,6 +699,9 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     <p contentEditable suppressContentEditableWarning>আঞ্চলিক পরিচালকের পক্ষে </p>
                 </div>
             </footer>
+            <div>
+                <button className='print:hidden px-4 py-2 bg-blue-500 hover:bg-blue-300 border-0 outline-0 text-white rounded-md font-semibold' onClick={handlePrint}>Print Page</button>
+            </div>
         </div>
     );
 };

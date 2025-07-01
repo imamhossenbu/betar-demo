@@ -1,36 +1,38 @@
 @import "tailwindcss";
 
 /* Custom print styles to ensure optimal printing */
-@media print {
+/* @media print {
   body {
     -webkit-print-color-adjust: exact !important;
     /* For WebKit browsers (Safari, Chrome) */
-    color-adjust: exact !important;
-    /* Standard property */
-  }
-
-  /* Ensure backgrounds are printed */
-  .bg-gradient-to-r,
-  .bg-gray-50,
-  .bg-white {
-    background-color: transparent !important;
-    /* Override background for printing */
-    background-image: none !important;
-  }
-
-  th,
-  td {
-    /* border: 1px solid black !important; */
-    /* Ensure borders are visible */
-  }
-
-  /* Hide scrollbars during print */
-  ::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0 !important;
-  }
-
-  * {
-    overflow: visible !important;
-  }
+color-adjust: exact !important;
+/* Standard property */
 }
+
+/* Ensure backgrounds are printed */
+.bg-gradient-to-r,
+.bg-gray-50,
+.bg-white {
+  background-color: transparent !important;
+  /* Override background for printing */
+  background-image: none !important;
+}
+
+th,
+td {
+  /* border: 1px solid black !important; */
+  /* Ensure borders are visible */
+}
+
+/* Hide scrollbars during print */
+::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+* {
+  overflow: visible !important;
+}
+}
+
+*/
