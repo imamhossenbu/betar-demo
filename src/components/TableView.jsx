@@ -430,18 +430,31 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     }
 
     return (
-        <div className="bg-white p-2 sm:p-3 w-full font-[kalpurush]  overflow-x-auto print:overflow-visible print:w-auto print:mx-auto print:max-w-none">
+        <div className="bg-white p-2 sm:p-3 w-full font-[kalpurush] relative  overflow-x-auto print:overflow-visible print:w-auto print:mx-auto print:max-w-none">
+            {/* <div className='absolute top-0 mb-20 right-[60%]'>
+                <img className='w-20 h-20' src="/logo.png" alt="logo" />
+            </div> */}
             <header className="mb-6 w-full">
-                <div className="flex flex-col md:flex-row justify-between items-center mt-3 text-center md:text-right overflow-x-auto print:overflow-visible">
+                <div className="flex flex-col relative md:flex-row justify-between items-center mt-3 text-center md:text-right overflow-x-auto print:overflow-visible">
                     {/* Empty div for spacing on left */}
                     <div className="flex-1 hidden md:block"></div>
+                    <div className='absolute border px-4 py-1'>
+                        <h2>কিউশীট ও সিডি চার্ট</h2>
+                    </div>
+                    <div className="flex flex-col items-center justify-center text-sm mb-4 md:mb-0 relative w-full md:w-auto">
+                        {/* Logo */}
+                        <img className="w-20 h-20 mb-2" src="/logo.png" alt="logo" />
 
-                    {/* Central Government/Radio Info */}
-                    <div className="flex-none text-center w-full md:w-auto text-sm mb-4 md:mb-0">
-                        <p>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
-                        <p>বাংলাদেশ বেতার, বরিশাল।</p>
-                        <p><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">এপঃ</span> Bangladesh Betar</p>
-                        <p className="">ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
+                        {/* Text Below Logo */}
+                        <div className="text-center leading-5">
+                            <p>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
+                            <p>বাংলাদেশ বেতার, বরিশাল।</p>
+                            <p><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">এপঃ</span> Bangladesh Betar</p>
+                            <p>ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
+                        </div>
+                    </div>
+                    <div className='ml-5 border px-4 py-1'>
+                        <h2>{urlShiftKey === 'সকাল' ? 'প্রথম অধিবেশন' : 'দ্বিতীয় অধিবেশন'}</h2>
                     </div>
 
                     {/* Dynamic Date/Time/Shift Info on the right */}
@@ -451,89 +464,89 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                         <p contentEditable suppressContentEditableWarning className="whitespace-nowrap">০১/০৭/২০২৫ খ্রিস্টাব্দ</p>
                     </div>
                 </div>
-            </header>
+            </header >
 
             {/* Officer/Supervisor/Announcer Table */}
-            <div className="overflow-x-auto print:overflow-visible mx-auto mb-4">
-                <table className="min-w-full border-collapse border border-black mx-auto text-sm w-full print:w-full print:min-w-full">
+            < div className="overflow-x-auto print:overflow-visible mx-auto mb-4" >
+                <table className="min-w-full border-collapse border border-gray-700 mx-auto text-sm w-full print:w-full print:min-w-full">
                     <thead>
                         <tr>
-                            <td contentEditable suppressContentEditableWarning className="border border-black px-2 py-1 whitespace-nowrap">অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ </td>
-                            <td contentEditable suppressContentEditableWarning className="border border-black px-2 py-1 whitespace-nowrap">অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান </td>
-                            <td contentEditable suppressContentEditableWarning className="border border-black px-2 py-1 whitespace-nowrap">ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন</td>
+                            <td contentEditable suppressContentEditableWarning className="border border-gray-700 px-2 py-1 whitespace-nowrap">অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ </td>
+                            <td contentEditable suppressContentEditableWarning className="border border-gray-700 px-2 py-1 whitespace-nowrap">অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান </td>
+                            <td contentEditable suppressContentEditableWarning className="border border-gray-700 px-2 py-1 whitespace-nowrap">ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন</td>
                         </tr>
                     </thead>
                 </table>
-            </div>
+            </div >
 
             {/* Main Program Table */}
-            <div className="overflow-x-auto print:overflow-visible rounded-lg border border-gray-200 mb-4">
-                <table border="1" className="w-full table-auto border-collapse border border-black divide-y divide-gray-200 print:w-full print:min-w-full print:max-w-none">
+            < div className="overflow-x-auto print:overflow-visible   mb-4" >
+                <table border="1" className="w-full table-auto border-collapse border border-gray-700 divide-y divide-gray-200 print:w-full print:min-w-full print:max-w-none">
                     <thead className="bg-gray-50">
                         <tr >
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 rounded-tl-lg whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 rounded-tl-lg whitespace-nowrap"
                             >
                                 ক্রমিক
                             </th>
                             <th colSpan={2}
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 প্রচার সময়
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 w-[180px] sm:w-[200px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 w-[180px] sm:w-[200px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 অনুষ্ঠান বিবরণী
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 শিল্পী
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 গীতিকার
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 সুরকার
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 সিডি ও কাট
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 স্থিতি
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 প্রচার মন্তব্য
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 ডি/ও স্বাক্ষর
                             </th>
                             <th
                                 scope="col"
-                                className="py-3 print:hidden px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-300 tracking-wider rounded-tr-lg whitespace-nowrap"
+                                className="py-1 print:hidden px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider rounded-tr-lg whitespace-nowrap"
                             >
                                 Action
                             </th>
@@ -554,17 +567,17 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                                                         } hover:bg-gray-100 transition-colors duration-200`}
                                                 >
-                                                    <td className="py-3 px-2 border border-gray-300 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
+                                                    <td className="py-1 px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                                         {item.serial || ' '}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
+                                                    <td className="py-3 px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                                         {item.period || ' '} {/* Displaying Period here */}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 text-center whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.broadcastTime || ' '}
                                                     </td>
 
-                                                    <td className="py-3 px-2 w-[180px] sm:w-[280px] text-xs sm:text-sm border border-gray-300 text-gray-700">
+                                                    <td className="py-1 px-2 w-[180px] sm:w-[280px] text-xs sm:text-sm border border-gray-700 text-gray-700">
                                                         <label className="flex items-start gap-1 sm:gap-2">
                                                             <input
                                                                 type="checkbox"
@@ -573,7 +586,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                                         ceremony._id === item._id
                                                                 )}
                                                                 onChange={() => handleCheckboxChange(item)}
-                                                                className="mt-0.5 sm:mt-1.5 h-3 w-3 sm:h-4 sm:w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded print:hidden"
+                                                                className="mt-0.5 sm:mt-1.5 h-3 w-3 sm:h-4 sm:w-4 text-blue-600 focus:ring-blue-500 border-gray-700 rounded print:hidden"
                                                             />
 
                                                             <span className="flex flex-col flex-grow">
@@ -586,16 +599,16 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                         </label>
                                                     </td>
 
-                                                    <td className="py-3 px-2 border border-gray-300 text-xs sm:text-sm text-gray-700 whitespace-nowrap">
+                                                    <td className="py-1 px-2 border border-gray-700 text-xs sm:text-sm text-gray-700 whitespace-nowrap">
                                                         {item.programType === 'Song' ? (item.artist || ' ') : ''}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (item.lyricist || ' ') : ''}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (item.composer || ' ') : ''}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (
                                                             <>
                                                                 <input
@@ -613,15 +626,15 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                             ' '
                                                         )}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (item.duration || ' ') : ''}
                                                     </td>
 
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-300 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                     </td>
-                                                    <td className="py-3 print:hidden px-2 border border-gray-300 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
+                                                    <td className="py-1 print:hidden px-2 border border-gray-700 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
                                                         <button
                                                             type="button"
                                                             onClick={() => handleEdit(index)}
@@ -654,20 +667,20 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                         </Droppable>
                     </DragDropContext>
                 </table>
-            </div>
+            </div >
 
             <div className="flex print:hidden flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
                 <button
                     type="button"
                     onClick={handleAddNewClick}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
                 >
                     Add New
                 </button>
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
                 >
                     Submit
                 </button>
@@ -684,25 +697,32 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 currentProgramType={currentEditIndex !== null ? scheduleData[currentEditIndex].programType : 'General'}
             />
 
-            <footer className="flex flex-col sm:flex-row items-center justify-between my-10 sm:my-20 text-xs sm:text-sm text-center sm:text-left space-y-4 sm:space-y-0">
-                <div className='w-full sm:w-auto'>
+            <footer className="flex flex-col sm:flex-row items-center justify-between my-10  text-xs sm:text-sm text-center sm:text-left space-y-4 sm:space-y-0">
+                <div className='w-full sm:w-auto text-center'>
                     <p contentEditable suppressContentEditableWarning>মো. ফারুক হাওলাদার</p>
                     <p contentEditable suppressContentEditableWarning>টেপরেকর্ড লাইব্রেরীয়ান</p>
                 </div>
-                <div className='w-full sm:w-auto'>
+                <div className='w-full sm:w-auto text-center'>
                     <p contentEditable suppressContentEditableWarning>হাসনাইন ইমতিয়াজ</p>
                     <p contentEditable suppressContentEditableWarning>সহকারী পরিচালক(অনুষ্ঠান)</p>
                 </div>
-                <div className='w-full sm:w-auto'>
+                <div className='w-full sm:w-auto text-center'>
                     <p contentEditable suppressContentEditableWarning>মো. রফিকুল ইসলাম </p>
                     <p contentEditable suppressContentEditableWarning>উপ-আঞ্চলিক পরিচালক </p>
                     <p contentEditable suppressContentEditableWarning>আঞ্চলিক পরিচালকের পক্ষে </p>
                 </div>
             </footer>
-            <div>
-                <button className='print:hidden px-4 py-2 bg-blue-500 hover:bg-blue-300 border-0 outline-0 text-white rounded-md font-semibold' onClick={handlePrint}>Print Page</button>
+            <div className='flex justify-between text-sm mb-10'>
+                <div>পরীক্ষিত</div>
+                <div>লগবইয়ে অন্তর্ভূক্ত</div>
+                <div>ভারপ্রাপ্ত কর্মকর্তা</div>
+                <div>উপ-আঞ্চলিক পরিচালক</div>
+                <div>আঞ্চলিক পরিচালক</div>
             </div>
-        </div>
+            <div>
+                <button className='print:hidden px-4 py-1 bg-blue-500 hover:bg-blue-300 border-0 outline-0 text-white rounded-md font-semibold' onClick={handlePrint}>Print Page</button>
+            </div>
+        </div >
     );
 };
 
