@@ -480,31 +480,31 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             </div >
 
             {/* Main Program Table */}
-            < div className="overflow-x-auto print:overflow-visible   mb-4" >
+            < div className="print:w-full print:min-w-full print:max-w-none w-full overflow-x-auto" >
                 <table border="1" className="w-full table-auto border-collapse border border-gray-700 divide-y divide-gray-200 print:w-full print:min-w-full print:max-w-none">
                     <thead className="bg-gray-50">
                         <tr >
                             <th
                                 scope="col"
-                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 rounded-tl-lg whitespace-nowrap"
+                                className="py-1 px-2 w-[45px] min-w-[45px] max-w-[45px] text-left text-xs sm:text-sm font-semibold uppercase border border-gray-700 rounded-tl-lg whitespace-nowrap"
                             >
                                 ক্রমিক
                             </th>
                             <th colSpan={2}
                                 scope="col"
-                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 w-[40px] min-w-[40px] max-w-[40px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 প্রচার সময়
                             </th>
                             <th
                                 scope="col"
-                                className="py-1 px-2 w-[180px] sm:w-[200px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 w-[240px] min-w-[240px] max-w-[240px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 অনুষ্ঠান বিবরণী
                             </th>
                             <th
                                 scope="col"
-                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 w-[40px] min-w-[40px] max-w-[40px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 শিল্পী
                             </th>
@@ -522,27 +522,27 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                             </th>
                             <th
                                 scope="col"
-                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 w-[70px] min-w-[70px] max-w-[70px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
-                                সিডি ও কাট
+                                সিডি/কাট
                             </th>
                             <th
                                 scope="col"
-                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 w-[40px] min-w-[40px] max-w-[40px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
                                 স্থিতি
                             </th>
                             <th
                                 scope="col"
-                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 w-[45px] min-w-[45px] max-w-[45px] text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
-                                প্রচার মন্তব্য
+                                প্রচার <br /> মন্তব্য
                             </th>
                             <th
                                 scope="col"
-                                className="py-1 px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
+                                className="py-1 px-2 w-[45px] min-w-[45px] max-w-[45px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
-                                ডি/ও স্বাক্ষর
+                                ডি/ও <br /> স্বাক্ষর
                             </th>
                             <th
                                 scope="col"
@@ -567,17 +567,17 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                                                         } hover:bg-gray-100 transition-colors duration-200`}
                                                 >
-                                                    <td className="py-1 px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
+                                                    <td className="py-1 px-2 w-[20px] min-w-[20px] max-w-[20px]  border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900 break-words">
                                                         {item.serial || ' '}
                                                     </td>
-                                                    <td className="py-3 px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
+                                                    <td className="py-1 w-[45px] min-w-[45px] max-w-[45px] px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                                         {item.period || ' '} {/* Displaying Period here */}
                                                     </td>
-                                                    <td className="py-1 px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 w-[70px] min-w-[70px] max-w-[70px] px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.broadcastTime || ' '}
                                                     </td>
 
-                                                    <td className="py-1 px-2 w-[180px] sm:w-[280px] text-xs sm:text-sm border border-gray-700 text-gray-700">
+                                                    <td className="py-1 px-2 text-xs sm:text-sm border border-gray-700 text-gray-700 w-[240px] min-w-[240px] max-w-[240px] overflow-hidden break-words">
                                                         <label className="flex items-start gap-1 sm:gap-2">
                                                             <input
                                                                 type="checkbox"
@@ -599,7 +599,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                         </label>
                                                     </td>
 
-                                                    <td className="py-1 px-2 border border-gray-700 text-xs sm:text-sm text-gray-700 whitespace-nowrap">
+                                                    <td className="py-1 px-2  border border-gray-700 text-xs sm:text-sm text-gray-700 whitespace-nowrap">
                                                         {item.programType === 'Song' ? (item.artist || ' ') : ''}
                                                     </td>
                                                     <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
@@ -608,7 +608,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (item.composer || ' ') : ''}
                                                     </td>
-                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 w-[30px] min-w-[30px] max-w-[30px] border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.programType === 'Song' ? (
                                                             <>
                                                                 <input
@@ -630,9 +630,9 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                         {item.programType === 'Song' ? (item.duration || ' ') : ''}
                                                     </td>
 
-                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 w-[20px] min-w-[20px] max-w-[20px] border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                     </td>
-                                                    <td className="py-1 px-2 border border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                                    <td className="py-1 px-2 border w-[20px] min-w-[20px] max-w-[20px] border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                     </td>
                                                     <td className="py-1 print:hidden px-2 border border-gray-700 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
                                                         <button
