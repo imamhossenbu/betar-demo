@@ -467,17 +467,38 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             </header >
 
             {/* Officer/Supervisor/Announcer Table */}
-            < div className="overflow-x-auto print:overflow-visible mx-auto mb-4" >
-                <table className="min-w-full border-collapse border border-gray-700 mx-auto text-sm w-full print:w-full print:min-w-full">
+            <div className="w-full print:w-full print:min-w-full print:max-w-none overflow-x-auto print:overflow-visible">
+                <table className="w-full table-fixed border-collapse border border-gray-700 print:w-full print:min-w-full print:max-w-none">
                     <thead>
-                        <tr>
-                            <td contentEditable suppressContentEditableWarning className="border border-gray-700 px-2 py-1 whitespace-nowrap">অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ </td>
-                            <td contentEditable suppressContentEditableWarning className="border border-gray-700 px-2 py-1 whitespace-nowrap">অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান </td>
-                            <td contentEditable suppressContentEditableWarning className="border border-gray-700 px-2 py-1 whitespace-nowrap">ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন</td>
+                        <tr className="text-sm text-left">
+                            <td
+                                contentEditable
+                                suppressContentEditableWarning
+                                className="border border-gray-700 px-2 py-1 w-[25%] whitespace-normal break-words"
+                            >
+                                অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ
+                            </td>
+                            <td
+                                contentEditable
+                                suppressContentEditableWarning
+                                className="border border-gray-700 px-2 py-1 w-[37.5%] whitespace-normal break-words"
+                            >
+                                অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান
+                            </td>
+                            <td
+                                contentEditable
+                                suppressContentEditableWarning
+                                className="border border-gray-700 px-2 py-1 w-[37.5%] whitespace-normal break-words"
+                            >
+                                ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন
+                            </td>
                         </tr>
                     </thead>
                 </table>
-            </div >
+            </div>
+
+
+
 
             {/* Main Program Table */}
             < div className="print:w-full print:min-w-full print:max-w-none w-full overflow-x-auto" >

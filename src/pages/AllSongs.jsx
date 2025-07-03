@@ -100,11 +100,8 @@ const AllSongs = () => {
 
     return (
         <div className="p-6 font-[kalpurush]">
-            {/* Styled Header */}
             <div className="text-center mb-6">
-                <h2 className="text-3xl font-bold text-green-700 mb-1">
-                    🎵 সকল সঙ্গীত তালিকা
-                </h2>
+                <h2 className="text-3xl font-bold text-green-700 mb-1">🎵 সকল সঙ্গীত তালিকা</h2>
                 <p className="text-sm text-gray-600">সকল গান দেখুন, এডিট ও ডিলিট করুন</p>
             </div>
 
@@ -120,40 +117,40 @@ const AllSongs = () => {
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto">
-                <table className="min-w-full border-collapse shadow-sm ">
+            <div className="overflow-x-auto print:w-full print:min-w-full print:max-w-none">
+                <table className="table-fixed min-w-full border-collapse shadow-sm text-sm">
                     <thead>
-                        <tr className="bg-green-100 text-sm">
-                            <th className="px-4 py-3 border border-gray-300  text-center">#</th>
-                            <th className="px-4 py-3 border border-gray-300  text-left">গানের নাম</th>
-                            <th className="px-4 py-3 border  border-gray-300 text-center">শিল্পী</th>
-                            <th className="px-4 py-3 border  border-gray-300 text-center">গীতিকার</th>
-                            <th className="px-4 py-3 border  border-gray-300 text-center">সুরকার</th>
-                            <th className="px-4 py-3 border  border-gray-300 text-center">সিডি/কাট</th>
-                            <th className="px-4 py-3 border  border-gray-300 text-center">স্থিতি</th>
-                            <th className="px-4 py-3 border border-gray-300  text-center">অ্যাকশন</th>
+                        <tr className="bg-green-100">
+                            <th className="w-[40px] px-2 py-3 border border-gray-300 text-center">#</th>
+                            <th className="w-[280px] px-2 py-3 border border-gray-300 text-left">গানের নাম</th>
+                            <th className="w-[150px] px-2 py-3 border border-gray-300 text-center">শিল্পী</th>
+                            <th className="w-[150px] px-2 py-3 border border-gray-300 text-center">গীতিকার</th>
+                            <th className="w-[150px] px-2 py-3 border border-gray-300 text-center">সুরকার</th>
+                            <th className="w-[80px] px-2 py-3 border border-gray-300 text-center">সিডি/কাট</th>
+                            <th className="w-[80px] px-2 py-3 border border-gray-300 text-center">স্থিতি</th>
+                            <th className="w-[120px] px-2 py-3 border border-gray-300 text-center">অ্যাকশন</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredSongs.map((song, index) => (
-                            <tr key={song._id} className="hover:bg-gray-50 text-sm text-center">
-                                <td className="px-4 py-3 border border-gray-300 ">{toBanglaNumber(index + 1)}</td>
-                                <td className="px-4 py-3 border border-gray-300 text-left ">
+                            <tr key={song._id} className="hover:bg-gray-50 text-center">
+                                <td className="w-[40px] px-2 py-3 border border-gray-300">{toBanglaNumber(index + 1)}</td>
+                                <td className="w-[280px] px-2 py-3 border border-gray-300 text-left break-words">
                                     <div className="flex flex-col space-y-0.5">
                                         {(song.programDetails || '').split(',').map((item, idx) => (
                                             <span key={idx}>{item.trim()}</span>
                                         ))}
                                     </div>
                                 </td>
-                                <td className="px-4 py-3 border border-gray-300 ">{song.artist}</td>
-                                <td className="px-4 py-3 border border-gray-300 ">{song.lyricist}</td>
-                                <td className="px-4 py-3 border border-gray-300 ">{song.composer}</td>
-                                <td className="px-4 py-3 border border-gray-300 ">{song.cdCut}</td>
-                                <td className="px-4 py-3 border border-gray-300 ">{song.duration}</td>
-                                <td className="px-3 py-3 border border-gray-300 space-x-2">
+                                <td className="w-[150px] px-2 py-3 border border-gray-300">{song.artist}</td>
+                                <td className="w-[150px] px-2 py-3 border border-gray-300">{song.lyricist}</td>
+                                <td className="w-[150px] px-2 py-3 border border-gray-300">{song.composer}</td>
+                                <td className="w-[80px] px-2 py-3 border border-gray-300">{song.cdCut}</td>
+                                <td className="w-[80px] px-2 py-3 border border-gray-300">{song.duration}</td>
+                                <td className="w-[120px] px-2 py-3 border border-gray-300 space-x-2">
                                     <button
                                         onClick={() => handleEdit(song)}
-                                        className="bg-green-500 hover:bg-green-300   text-black text-base px-2 py-2 rounded-full"
+                                        className="bg-green-500 hover:bg-green-300 text-black text-base px-2 py-2 rounded-full"
                                     >
                                         <FaEdit />
                                     </button>
@@ -177,7 +174,7 @@ const AllSongs = () => {
                 </table>
             </div>
 
-            {/* Entry Modal */}
+            {/* Modal */}
             {isModalOpen && (
                 <EntryModal
                     isOpen={isModalOpen}
