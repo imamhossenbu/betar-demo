@@ -28,7 +28,7 @@ const DashboardPage = () => {
     };
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 w-full mx-auto font-[kalpurush] text-gray-800">
+        <div className="bg-white shadow-lg rounded-xl p-6 w-full mx-auto font-kalpurush text-gray-800">
             <h2 className="text-3xl font-bold mb-6 text-center text-blue-700">স্বাগতম, ড্যাশবোর্ড!</h2>
             <p className="text-center text-lg mb-8">নেভিগেশন বার থেকে একটি দিন এবং অধিবেশন নির্বাচন করুন অথবা নতুন কিছু যোগ করুন।</p>
 

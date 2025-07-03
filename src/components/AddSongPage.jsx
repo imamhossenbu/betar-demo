@@ -72,7 +72,7 @@ const AddSongPage = () => {
     };
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-2xl mx-auto font-[kalpurush]">
+        <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-2xl mx-auto font-kalpurush">
             <h2 className="text-2xl font-bold mb-6 text-center">নতুন সঙ্গীত যোগ করুন</h2>
 
             <form onSubmit={handleSubmit}>

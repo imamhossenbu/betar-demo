@@ -6,6 +6,13 @@ import { MdDelete } from 'react-icons/md';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { axiosSecure } from '../useAxiosSecure'
+import {
+    getDate,
+    getDay,
+    getMonth,
+    getWeekDay,
+    getYear,
+} from 'bangla-calendar';
 
 
 const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies }) => {
@@ -26,7 +33,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     const { shift: urlShiftKey, dayKey: urlDayKey } = useParams();
 
     const queryParams = new URLSearchParams(location.search);
-    const dayName = urlDayKey ? decodeURIComponent(urlDayKey) : 'দিন';
+    // const dayName = urlDayKey ? decodeURIComponent(urlDayKey) : 'দিন';
 
 
 
@@ -417,6 +424,28 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         });
     };
 
+
+    const today = new Date();
+
+    // Don't convert to Bangla before passing into getDate
+    const banglaDateObj = getDate(today, {
+        format: 'D MMMM, YYYYb',
+        calculationMethod: 'BD',
+    });
+
+    // Convert the final output to Bangla if needed (optional)
+    const banglaDate = banglaDateObj; // already Bangla formatted
+
+    // English date in Bangla numerals
+    const toBanglaNumber = (input) =>
+        input.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+
+    const engDate = `${toBanglaNumber(today.getDate())}/${toBanglaNumber(today.getMonth() + 1)}/${toBanglaNumber(today.getFullYear())}`;
+
+    // Optional: Bangla day name
+    const dayNames = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+    const dayName = dayNames[today.getDay()];
+
     const handleShowReport = (item) => {
         navigate('/report', { state: { ceremony: item } });
     };
@@ -430,7 +459,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     }
 
     return (
-        <div className="bg-white p-2 sm:p-3 w-full font-[kalpurush] relative  overflow-x-auto print:overflow-visible print:w-auto print:mx-auto print:max-w-none">
+        <div className="bg-white p-2 sm:p-3 w-full font-kalpurush print:font-kalpurush relative  overflow-x-auto print:overflow-visible print:w-auto print:mx-auto print:max-w-none">
             {/* <div className='absolute top-0 mb-20 right-[60%]'>
                 <img className='w-20 h-20' src="/logo.png" alt="logo" />
             </div> */}
@@ -460,8 +489,8 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     {/* Dynamic Date/Time/Shift Info on the right */}
                     <div className="flex-1 text-center md:text-right text-sm mt-4 md:mt-0">
                         <p contentEditable suppressContentEditableWarning className="whitespace-nowrap ">{dayName}</p>
-                        <p contentEditable suppressContentEditableWarning className=" whitespace-nowrap">১২ আষাঢ়, ১৪৩২ বঙ্গাব্দ </p>
-                        <p contentEditable suppressContentEditableWarning className="whitespace-nowrap">০১/০৭/২০২৫ খ্রিস্টাব্দ</p>
+                        <p contentEditable suppressContentEditableWarning className=" whitespace-nowrap">{banglaDate} </p>
+                        <p contentEditable suppressContentEditableWarning className="whitespace-nowrap">{engDate} খ্রিষ্টাব্দ</p>
                     </div>
                 </div>
             </header >

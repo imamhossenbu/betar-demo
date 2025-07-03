@@ -11,7 +11,7 @@ const ReportView = () => {
     if (!item) return <p className="text-red-500 text-center">No report data available.</p>;
 
     return (
-        <div className="p-10 max-w-4xl mx-auto bg-white text-[16px] leading-relaxed print:text-black print:shadow-none print:p-0 print:max-w-full print:rounded-none font-[kalpurush]">
+        <div className="p-10 max-w-4xl mx-auto bg-white text-[16px] leading-relaxed print:text-black print:shadow-none print:p-0 print:max-w-full print:rounded-none font-kalpurush">
             {/* Header */}
             <div className="text-center mb-4">
                 <p contentEditable suppressContentEditableWarning>বাংলাদেশ বেতার, বরিশাল</p>

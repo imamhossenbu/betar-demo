@@ -99,7 +99,7 @@ const AllSongs = () => {
         : songs;
 
     return (
-        <div className="p-6 font-[kalpurush]">
+        <div className="p-6 font-kalpurush">
             <div className="text-center mb-6">
                 <h2 className="text-3xl font-bold text-green-700 mb-1">🎵 সকল সঙ্গীত তালিকা</h2>
                 <p className="text-sm text-gray-600">সকল গান দেখুন, এডিট ও ডিলিট করুন</p>

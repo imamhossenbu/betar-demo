@@ -46,7 +46,7 @@ const SignupPage = () => {
     if (loading) return <Loading />;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-100 to-green-300 flex items-center justify-center font-[kalpurush] sm:p-6 lg:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-green-100 to-green-300 flex items-center justify-center font-kalpurush sm:p-6 lg:p-8">
             <div className="flex flex-col md:flex-row  w-full max-w-5xl bg-white sm:rounded-xl shadow-2xl overflow-hidden">
                 {/* Left Panel */}
                 <div className="md:w-1/2 p-8 sm:p-10 bg-gradient-to-tl from-teal-500 via-emerald-600 to-lime-500 text-white flex flex-col items-center justify-center text-center">

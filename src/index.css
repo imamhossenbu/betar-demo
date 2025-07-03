@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+
+@font-face {
+    font-family: 'Kalpurush';
+    src: url('/fonts/Kalpurush.ttf') format('truetype');
+    font-display: swap;
+}
+
+.font-kalpurush {
+    font-family: 'Kalpurush', 'Noto Serif Bengali', sans-serif;
+}

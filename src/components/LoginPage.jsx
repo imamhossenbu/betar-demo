@@ -61,7 +61,7 @@ const LoginPage = () => {
     if (loading) return <Loading />;
 
     return (
-        <div className="bg-gradient-to-br from-gray-100 to-blue-200 flex items-center justify-center font-[kalpurush] sm:p-6 lg:p-8 min-h-screen">
+        <div className="bg-gradient-to-br from-gray-100 to-blue-200 flex items-center justify-center font-kalpurush sm:p-6 lg:p-8 min-h-screen">
             <div className="flex flex-col md:flex-row w-full max-w-5xl bg-white rounded-xl shadow-2xl overflow-hidden">
                 {/* Left Panel */}
                 <div className="md:w-1/2 bg-yellow-200 text-black flex flex-col items-center justify-center text-center p-6">

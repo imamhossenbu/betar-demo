@@ -24,7 +24,7 @@ const ForgotPasswordPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-blue-200 font-[kalpurush] p-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-blue-200 font-kalpurush p-4">
             <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md text-center">
                 <h2 className="text-2xl font-bold mb-4 text-blue-700">পাসওয়ার্ড রিসেট করুন</h2>
                 <p className="text-gray-600 mb-6 text-sm">আপনার অ্যাকাউন্টে রিসেট লিংক পাঠাতে ইমেইল প্রদান করুন।</p>

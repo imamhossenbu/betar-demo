@@ -11,7 +11,7 @@ const PrintView = () => {
     };
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 w-full font-[kalpurush]  max-w-3xl mx-auto print:shadow-none print:rounded-none">
+        <div className="bg-white shadow-lg rounded-xl p-6 w-full font-kalpurush  max-w-3xl mx-auto print:shadow-none print:rounded-none">
             <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 print:hidden">
                 Selected Ceremonies for Print
             </h1>
