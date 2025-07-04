@@ -18,7 +18,7 @@ const AllUsers = () => {
     };
 
     const fetchUsers = () => {
-        axiosSecure.get('/users')
+        axiosSecure.get('/users', { withCredentials: true })
             .then(res => setUsers(res.data))
             .catch(err => console.error('Error fetching users:', err));
     };
@@ -32,7 +32,7 @@ const AllUsers = () => {
     const handleRoleToggle = async (userId, currentRole) => {
         const newRole = currentRole === 'admin' ? 'user' : 'admin';
         try {
-            const res = await axiosSecure.patch(`/users/${userId}`, { role: newRole });
+            const res = await axiosSecure.patch(`/users/${userId}`, { role: newRole }, { withCredentials: true });
             if (res.data.modifiedCount > 0) {
                 Swal.fire('সফল!', `ইউজার এখন ${newRole === 'admin' ? 'অ্যাডমিন' : 'ইউজার'}!`, 'success');
                 fetchUsers();
@@ -55,7 +55,7 @@ const AllUsers = () => {
         if (confirm.isConfirmed) {
             try {
                 // 1. Delete from your MongoDB
-                const res = await axiosSecure.delete(`/users/${user._id}`);
+                const res = await axiosSecure.delete(`/users/${user._id}`, { withCredentials: true });
 
                 Swal.fire('Deleted!', 'ইউজারটি মুছে ফেলা হয়েছে।', 'success');
                 fetchUsers();
