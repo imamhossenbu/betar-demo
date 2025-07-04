@@ -75,10 +75,11 @@ const AuthProvider = ({ children }) => {
                     setUser(currentUser);
 
                     try {
-                        await axiosSecure.post('/api/user', {
+                        await axiosSecure.post('/users', {
                             uid: currentUser.uid,
                             email: currentUser.email,
                             displayName: currentUser.displayName || '',
+                            role: 'user'
                         }, { withCredentials: true });
 
                         await axiosSecure.post('/jwt', {

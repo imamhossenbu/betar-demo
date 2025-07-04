@@ -14,6 +14,8 @@ import ErrorPage from './pages/ErrorPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import Loading from './components/Loading';
 import AllSongs from './pages/AllSongs';
+import AllUsers from './pages/AllUsers';
+import AdminRoute from './hooks/AdminRoute';
 
 const AppRouter = () => {
     const { user, loading, logout } = useContext(AuthContext); // ✅ use context logout
@@ -85,12 +87,17 @@ const AppRouter = () => {
                 },
                 {
                     path: 'add-song',
-                    element: <AddSongPage />,
+                    element: <AdminRoute><AddSongPage /></AdminRoute>,
                 },
                 {
                     path: 'all-songs',
                     element: <AllSongs />
                 },
+                {
+                    path: 'all-users',
+                    element: <AllUsers />
+                }
+                ,
                 {
                     path: '*',
                     element: <ErrorPage />,

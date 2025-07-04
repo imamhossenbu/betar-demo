@@ -8,17 +8,16 @@ import Swal from 'sweetalert2';
 import { axiosSecure } from '../useAxiosSecure'
 import {
     getDate,
-    getDay,
-    getMonth,
-    getWeekDay,
-    getYear,
 } from 'bangla-calendar';
+import useAdmin from '../hooks/useAdmin';
+import Loading from './Loading';
 
 
 const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [modalInitialData, setModalInitialData] = useState({});
+    const [isAdmin, adminLoading] = useAdmin();
 
 
     // প্রতি রো-এর জন্য CD Cut অনুসন্ধানের লোডিং অবস্থা ট্র্যাক করার জন্য নতুন স্টেট
@@ -459,6 +458,8 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         window.print();
     }
 
+    if (adminLoading) return <Loading />
+
     return (
         <div className="bg-white p-2 sm:p-3 w-full font-kalpurush print:font-kalpurush relative  overflow-x-auto print:overflow-visible print:w-auto print:mx-auto print:max-w-none">
             {/* <div className='absolute top-0 mb-20 right-[60%]'>
@@ -489,7 +490,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
                     {/* Dynamic Date/Time/Shift Info on the right */}
                     <div className="flex-1 text-center md:text-right text-sm mt-4 md:mt-0">
-                        <p contentEditable suppressContentEditableWarning className="whitespace-nowrap ">{dayName}</p>
+                        <p contentEditable suppressContentEditableWarning className="whitespace-nowrap ">{urlDayKey}</p>
                         <p contentEditable suppressContentEditableWarning className=" whitespace-nowrap">{banglaDate} </p>
                         <p contentEditable suppressContentEditableWarning className="whitespace-nowrap">{engDate} খ্রিষ্টাব্দ</p>
                     </div>
@@ -595,12 +596,14 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                             >
                                 ডি/ও <br /> স্বাক্ষর
                             </th>
-                            <th
-                                scope="col"
-                                className="py-1 print:hidden px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider rounded-tr-lg whitespace-nowrap"
-                            >
-                                Action
-                            </th>
+                            {isAdmin && (
+                                <th
+                                    scope="col"
+                                    className="py-1 print:hidden px-2 text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider rounded-tr-lg whitespace-nowrap"
+                                >
+                                    Action
+                                </th>
+                            )}
                         </tr>
                     </thead>
                     <DragDropContext onDragEnd={handleDragEnd}>
@@ -630,15 +633,17 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
                                                     <td className="py-1 px-2 text-xs sm:text-sm border border-gray-700 text-gray-700 w-[240px] min-w-[240px] max-w-[240px] overflow-hidden break-words">
                                                         <label className="flex items-start gap-1 sm:gap-2">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selectedCeremonies.some(
-                                                                    (ceremony) =>
-                                                                        ceremony._id === item._id
-                                                                )}
-                                                                onChange={() => handleCheckboxChange(item)}
-                                                                className="mt-0.5 sm:mt-1.5 h-3 w-3 sm:h-4 sm:w-4 text-blue-600 focus:ring-blue-500 border-gray-700 rounded print:hidden"
-                                                            />
+                                                            {isAdmin && (
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={selectedCeremonies.some(
+                                                                        (ceremony) =>
+                                                                            ceremony._id === item._id
+                                                                    )}
+                                                                    onChange={() => handleCheckboxChange(item)}
+                                                                    className="mt-0.5 sm:mt-1.5 h-3 w-3 sm:h-4 sm:w-4 text-blue-600 focus:ring-blue-500 border-gray-700 rounded print:hidden"
+                                                                />
+                                                            )}
 
                                                             <span className="flex flex-col flex-grow">
                                                                 {item.programDetails
@@ -685,29 +690,31 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                     </td>
                                                     <td className="py-1 px-2 border w-[20px] min-w-[20px] max-w-[20px] border-gray-700 whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                     </td>
-                                                    <td className="py-1 print:hidden px-2 border border-gray-700 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleEdit(index)}
-                                                            className="text-white mr-1 px-1.5 py-1.5 rounded-full bg-black border border-white hover:bg-gray-800 transition-colors text-base sm:text-md"
-                                                        >
-                                                            <FaEdit />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleDelete(index)}
-                                                            className="text-red-600 hover:text-red-900 px-1.5 py-1.5 rounded-full border border-red-600 hover:bg-red-50 transition-colors text-base sm:text-md"
-                                                        >
-                                                            <MdDelete />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleShowReport(item)}
-                                                            className="text-blue-600 hover:text-blue-800 px-1.5 py-1.5 border border-blue-600 rounded-full hover:bg-blue-50 transition-colors ml-1 text-base sm:text-md"
-                                                        >
-                                                            <FaRegFileAlt />
-                                                        </button>
-                                                    </td>
+                                                    {isAdmin && (
+                                                        <td className="py-1 print:hidden px-2 border border-gray-700 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleEdit(index)}
+                                                                className="text-white mr-1 px-1.5 py-1.5 rounded-full bg-black border border-white hover:bg-gray-800 transition-colors text-base sm:text-md"
+                                                            >
+                                                                <FaEdit />
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleDelete(index)}
+                                                                className="text-red-600 hover:text-red-900 px-1.5 py-1.5 rounded-full border border-red-600 hover:bg-red-50 transition-colors text-base sm:text-md"
+                                                            >
+                                                                <MdDelete />
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleShowReport(item)}
+                                                                className="text-blue-600 hover:text-blue-800 px-1.5 py-1.5 border border-blue-600 rounded-full hover:bg-blue-50 transition-colors ml-1 text-base sm:text-md"
+                                                            >
+                                                                <FaRegFileAlt />
+                                                            </button>
+                                                        </td>
+                                                    )}
                                                 </tr>
                                             )}
                                         </Draggable>
@@ -720,22 +727,24 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 </table>
             </div >
 
-            <div className="flex print:hidden flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
-                <button
-                    type="button"
-                    onClick={handleAddNewClick}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
-                >
-                    Add New
-                </button>
-                <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
-                >
-                    Submit
-                </button>
-            </div>
+            {isAdmin && (
+                <div className="flex print:hidden flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
+                    <button
+                        type="button"
+                        onClick={handleAddNewClick}
+                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+                    >
+                        Add New
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleSubmit}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+                    >
+                        Submit
+                    </button>
+                </div>
+            )}
 
             {/* Entry Modal for both Add and Edit */}
             <EntryModal
@@ -770,9 +779,11 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 <div>উপ-আঞ্চলিক পরিচালক</div>
                 <div>আঞ্চলিক পরিচালক</div>
             </div>
-            <div>
-                <button className='print:hidden px-4 py-1 bg-blue-500 hover:bg-blue-300 border-0 outline-0 text-white rounded-md font-semibold' onClick={handlePrint}>Print Page</button>
-            </div>
+            {isAdmin && (
+                <div>
+                    <button className='print:hidden px-4 py-1 bg-blue-500 hover:bg-blue-300 border-0 outline-0 text-white rounded-md font-semibold' onClick={handlePrint}>Print Page</button>
+                </div>
+            )}
         </div >
     );
 };
