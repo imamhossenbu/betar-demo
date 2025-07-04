@@ -135,7 +135,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 } finally {
                     setLoadingCdCutIndex(null); // লোডিং শেষ
                 }
-            }, 500); // 500ms debounce
+            }, 1000); // 500ms debounce
         } else {
             // যদি ইনপুট খালি হয় বা প্রোগ্রাম টাইপ Song না হয়, তাহলে লোডিং বন্ধ করুন
             setLoadingCdCutIndex(null);
@@ -445,13 +445,14 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     // Optional: Bangla day name
     const dayNames = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
     const dayName = dayNames[today.getDay()];
+    const dayShift = urlShiftKey === 'সকাল' ? 'প্রথম অধিবেশন' : 'দ্বিতীয় অধিবেশন'
 
     const handleShowReport = (item) => {
         navigate('/report', { state: { ceremony: item } });
     };
 
     const handleSubmit = () => {
-        navigate('/print', { state: { selectedRows: selectedCeremonies } });
+        navigate('/print', { state: { selectedRows: selectedCeremonies, dayName: urlDayKey, engDate: engDate, dayShift: dayShift } });
     };
 
     const handlePrint = () => {
@@ -467,7 +468,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 <div className="flex flex-col relative md:flex-row justify-between items-center mt-3 text-center md:text-right overflow-x-auto print:overflow-visible">
                     {/* Empty div for spacing on left */}
                     <div className="flex-1 hidden md:block"></div>
-                    <div className='absolute border px-4 py-1'>
+                    <div className=' border px-4 py-1'>
                         <h2>কিউশীট ও সিডি চার্ট</h2>
                     </div>
                     <div className="flex flex-col items-center justify-center text-sm mb-4 md:mb-0 relative w-full md:w-auto">
@@ -482,8 +483,8 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                             <p>ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
                         </div>
                     </div>
-                    <div className='ml-5 border px-4 py-1'>
-                        <h2>{urlShiftKey === 'সকাল' ? 'প্রথম অধিবেশন' : 'দ্বিতীয় অধিবেশন'}</h2>
+                    <div className='border print:mr-4 px-4 py-1'>
+                        <h2>{dayShift}</h2>
                     </div>
 
                     {/* Dynamic Date/Time/Shift Info on the right */}

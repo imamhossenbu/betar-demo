@@ -37,19 +37,19 @@ const ReportView = () => {
                     </tr>
                     <tr>
                         <td className="py-1"><strong>স্থিতিঃ</strong></td>
-                        <td contentEditable suppressContentEditableWarning>{item.duration || '২৫ মিনিট'}</td>
+                        <td contentEditable suppressContentEditableWarning>{item.duration || ''}</td>
                     </tr>
                     <tr>
                         <td className="py-1"><strong>উপস্থাপক/পরিচালকঃ</strong></td>
-                        <td contentEditable suppressContentEditableWarning>{item.presenter || 'মোঃ হুমায়ুন কবির খান'}</td>
+                        <td contentEditable suppressContentEditableWarning></td>
                     </tr>
                     <tr>
                         <td className="py-1"><strong>রচনা/ গ্রন্থনাঃ   </strong></td>
-                        <td contentEditable suppressContentEditableWarning>{item.technician || 'মোঃ রফিকুল ইসলাম'}</td>
+                        <td contentEditable suppressContentEditableWarning>{''}</td>
                     </tr>
                     <tr>
                         <td className="py-1"><strong>প্রযোজকঃ</strong></td>
-                        <td contentEditable suppressContentEditableWarning>{item.producer || 'হাসনাইন ইমতিয়াজ'}</td>
+                        <td contentEditable suppressContentEditableWarning>{''}</td>
                     </tr>
                 </tbody>
             </table>
@@ -61,32 +61,29 @@ const ReportView = () => {
                 <p className="mb-1 font-bold" contentEditable suppressContentEditableWarning>
                     অনুষ্ঠান সূচিঃ
                 </p>
-                <div contentEditable suppressContentEditableWarning className="pl-4">
+                <div contentEditable suppressContentEditableWarning className="pl-4 min-h-[100px]">
                     {/* উদাহরণ ডেটা, আপনি চাইলে ডাইনামিক করে নিতে পারেন */}
-                    <p>ক) পুকুরে চুন প্রয়োগের উপকারিতা — পরিচালক</p>
-                    <p>খ) সর্জান পদ্ধতিতে সারা বছর সবজি চাষ — মোঃ আব্দুল আজিজ খান</p>
-                    <p>গ) গান — দুই চাকার এই আজিব গাড়ি... শিল্পীঃ সুধীর তালুকদার</p>
-                    <p>ঘ) স্বাস্থ্য বিষয়ক টিপস</p>
+
                 </div>
             </div>
 
             <hr className="border border-dashed border-black my-6" />
             {/* Opening Announcement */}
-            <div className="mb-6 text-center">
+            <div className="mb-6 ">
                 <p className="mb-1 font-bold" contentEditable suppressContentEditableWarning>উদ্বোধনী ঘোষণাঃ</p>
                 <p contentEditable suppressContentEditableWarning>
-                    প্রিয় শ্রোতা, এখন শুনবেন কৃষি বিষয়ক আঞ্চলিক অনুষ্ঠান “{item.programTitle || item.programDetails?.split(',')[0]?.trim() || ''}”<br />
-                    গ্রন্থনা ও পরিচালনা করেছেন - {item.presenter || 'মোঃ হুমায়ুন কবির খান'}
+                    প্রিয় শ্রোতা, এখন শুনবেন  “{item.programTitle || item.programDetails?.split(',')[0]?.trim() || ''}”<br />
+                    গ্রন্থনা ও পরিচালনা করেছেন - {''}
                 </p>
             </div>
             <hr className="border border-dashed border-black my-6" />
             {/* Closing Announcement */}
-            <div className="mb-6 text-center">
+            <div className="mb-6 ">
                 <p className="mb-1 font-bold" contentEditable suppressContentEditableWarning>সমাপ্তি ঘোষণাঃ</p>
                 <p contentEditable suppressContentEditableWarning>
-                    প্রিয় শ্রোতা, এক্ষণ শুনলেন কৃষি বিষয়ক আঞ্চলিক অনুষ্ঠান “{item.programTitle || item.programDetails?.split(',')[0]?.trim() || ''}”<br />
-                    গ্রন্থনা ও পরিচালনা করেছেন - {item.presenter || 'মোঃ হুমায়ুন কবির খান'}<br />
-                    সহযোগিতায় - মোঃ ইমরান এবং অনুষ্ঠানটি প্রযোজনা করেছেন - {item.producer || 'হাসনাইন ইমতিয়াজ'}
+                    প্রিয় শ্রোতা, এতক্ষণ শুনলেন  “{item.programTitle || item.programDetails?.split(',')[0]?.trim() || ''}”<br />
+                    গ্রন্থনা ও পরিচালনা করেছেন - {''}<br />
+                    সহযোগিতায় - {''} <br /> অনুষ্ঠানটি প্রযোজনা করেছেন - {''}
                 </p>
             </div>
             <hr className="border border-dashed border-black my-6" />

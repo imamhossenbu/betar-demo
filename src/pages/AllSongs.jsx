@@ -101,8 +101,8 @@ const AllSongs = () => {
     return (
         <div className="p-6 font-kalpurush">
             <div className="text-center mb-6">
-                <h2 className="text-3xl font-bold text-green-700 mb-1">🎵 সকল সঙ্গীত তালিকা</h2>
-                <p className="text-sm text-gray-600">সকল গান দেখুন, এডিট ও ডিলিট করুন</p>
+                <h2 className="text-3xl font-bold text-green-700 mb-1">🎵 সকল গান/অনুষ্ঠান তালিকা</h2>
+                <p className="text-sm text-gray-600">সকল গান/অনুষ্ঠান  দেখুন, এডিট ও ডিলিট করুন</p>
             </div>
 
             {/* Search bar */}
@@ -166,7 +166,7 @@ const AllSongs = () => {
                         {filteredSongs.length === 0 && (
                             <tr>
                                 <td colSpan="8" className="text-center p-4 text-gray-500">
-                                    কোন গান পাওয়া যায়নি।
+                                    কোন গান/অনুষ্ঠান পাওয়া যায়নি।
                                 </td>
                             </tr>
                         )}
