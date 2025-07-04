@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useAxiosSecure from '../useAxiosSecure';
+import { axiosSecure } from '../useAxiosSecure';
 import useAdmin from '../hooks/useAdmin';
 import Loading from '../components/Loading';
 import Swal from 'sweetalert2';
@@ -8,7 +8,6 @@ import { MdDelete } from 'react-icons/md';
 
 const AllUsers = () => {
     const [users, setUsers] = useState([]);
-    const axiosSecure = useAxiosSecure();
     const [isAdmin, adminLoading] = useAdmin();
     const navigate = useNavigate();
 
