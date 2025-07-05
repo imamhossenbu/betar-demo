@@ -39,7 +39,8 @@ const AuthProvider = ({ children }) => {
     const logout = async () => {
         setLoading(true);
         try {
-            await axiosSecure.post('/api/logout', {}, { withCredentials: true });
+            // withCredentials: true is already set on axiosSecure instance
+            await axiosSecure.post('/api/logout', {});
             await signOut(auth);
             setUser(null);
             Swal.fire({
@@ -75,29 +76,33 @@ const AuthProvider = ({ children }) => {
                     setUser(currentUser);
 
                     try {
+                        // withCredentials: true is already set on axiosSecure instance
                         await axiosSecure.post('/users', {
                             uid: currentUser.uid,
                             email: currentUser.email,
                             displayName: currentUser.displayName || '',
                             role: 'user'
-                        }, { withCredentials: true });
+                        });
 
+                        // withCredentials: true is already set on axiosSecure instance
                         await axiosSecure.post('/jwt', {
                             email: currentUser.email,
                             uid: currentUser.uid,
-                        }, { withCredentials: true });
+                        });
 
                     } catch (backendErr) {
                         console.error('Backend sync or JWT error:', backendErr);
                         setUser(null);
                         await signOut(auth);
-                        await axiosSecure.post('/api/logout', {}, { withCredentials: true });
+                        // withCredentials: true is already set on axiosSecure instance
+                        await axiosSecure.post('/api/logout', {});
                     }
 
                 } else {
                     setUser(null);
                     try {
-                        await axiosSecure.post('/api/logout', {}, { withCredentials: true });
+                        // withCredentials: true is already set on axiosSecure instance
+                        await axiosSecure.post('/api/logout', {});
                     } catch (logoutErr) {
                         console.warn("Failed to clear session:", logoutErr);
                     }
