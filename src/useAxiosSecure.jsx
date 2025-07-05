@@ -1,41 +1,42 @@
-// src/hooks/useAxiosSecure.js or wherever appropriate
-import { useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { AuthContext } from './provider/AuthProvider'
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from './provider/AuthProvider';
 
-// ✅ Axios instance
+
+
 const axiosSecure = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true,
-});
-
-
-// ✅ Custom hook that uses the same instance
+  baseURL: 'https://betar-server.onrender.com'
+})
 const useAxiosSecure = () => {
-  const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
-  useEffect(() => {
-    const interceptor = axiosSecure.interceptors.response.use(
-      res => res,
-      async (error) => {
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-          await logout();
-          navigate('/login', { replace: true });
-        }
-        return Promise.reject(error);
+  axiosSecure.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.authorization = `Bearer ${token}`;
       }
-    );
+      return config;
+    },
+    error => {
+      return Promise.reject(error);
+    });
 
-    return () => axiosSecure.interceptors.response.eject(interceptor);
-  }, [logout, navigate]);
+
+  axiosSecure.interceptors.response.use(response => {
+    return response;
+  }, async (error) => {
+    const status = error.response.status;
+    if (status === 401 || status === 403) {
+      await logout();
+      navigate('/login');
+    }
+    return Promise.reject(error);
+  });
 
   return axiosSecure;
 };
 
-// ✅ Named export for the instance (for use outside React)
-export { axiosSecure };
-
-// ✅ Default export for hook usage
 export default useAxiosSecure;

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useAxiosSecure from '../useAxiosSecure'
 
 import Swal from 'sweetalert2';
-import { axiosSecure } from '../useAxiosSecure'
 
 const AddSongPage = () => {
     const navigate = useNavigate();
+    const axiosSecure = useAxiosSecure();
 
     const programType = 'Song'; // Fixed for this page
 

@@ -4,7 +4,8 @@ import { useState, useContext } from 'react';
 
 import Swal from 'sweetalert2';
 import { AuthContext } from '../provider/AuthProvider';
-import { axiosSecure } from '../useAxiosSecure'
+import useAxiosPublic from '../useAxiosPublic';
+
 
 const days = [
     { name: 'সোমবার', key: 'সোমবার' },
@@ -20,6 +21,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
     const [openDay, setOpenDay] = useState(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const axiosPublic = useAxiosPublic();
 
     const { user } = useContext(AuthContext); // Get current logged in user from context
 
@@ -62,7 +64,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
         try {
 
 
-            const programsResponse = await axiosSecure.get(
+            const programsResponse = await axiosPublic.get(
                 `/api/programs?day=${encodeURIComponent(dayName)}&shift=${encodeURIComponent(shift)}`
             );
             setScheduleData(programsResponse.data);

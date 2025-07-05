@@ -1,12 +1,13 @@
 // hooks/useAdmin.js
 import { useContext, useEffect, useState } from 'react';
-import { axiosSecure } from '../useAxiosSecure'
+import useAxiosSecure from '../useAxiosSecure';
 import { AuthContext } from '../provider/AuthProvider';
 
 const useAdmin = () => {
     const { user, loading } = useContext(AuthContext);
     const [isAdmin, setIsAdmin] = useState(false);
     const [adminLoading, setAdminLoading] = useState(true);
+    const axiosSecure = useAxiosSecure();
 
     useEffect(() => {
         if (!user?.email || loading) return;

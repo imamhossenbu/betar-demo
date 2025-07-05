@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { axiosSecure } from '../useAxiosSecure';
+
 import EntryModal from '../components/EntryModal';
 import { FaEdit } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import useAdmin from '../hooks/useAdmin';
 import Loading from '../components/Loading';
+import useAxiosSecure from '../useAxiosSecure'
 
 const AllSongs = () => {
     const [songs, setSongs] = useState([]);
@@ -13,6 +14,7 @@ const AllSongs = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingSong, setEditingSong] = useState(null);
     const [isAdmin, adminLoading] = useAdmin();
+    const axiosSecure = useAxiosSecure();
 
     useEffect(() => {
         axiosSecure.get('/songs')

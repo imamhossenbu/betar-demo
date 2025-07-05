@@ -5,7 +5,8 @@ import { FaEdit, FaRegFileAlt } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { axiosSecure } from '../useAxiosSecure'
+import useAxiosSecure from '../useAxiosSecure'
+
 import {
     getDate,
 } from 'bangla-calendar';
@@ -18,6 +19,8 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [modalInitialData, setModalInitialData] = useState({});
     const [isAdmin, adminLoading] = useAdmin();
+
+    const axiosSecure = useAxiosSecure();
 
 
     // প্রতি রো-এর জন্য CD Cut অনুসন্ধানের লোডিং অবস্থা ট্র্যাক করার জন্য নতুন স্টেট

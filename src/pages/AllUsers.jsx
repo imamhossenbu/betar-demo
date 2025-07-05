@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { axiosSecure } from '../useAxiosSecure';
+import useAxiosSecure from '../useAxiosSecure';
 import useAdmin from '../hooks/useAdmin';
 import Loading from '../components/Loading';
 import Swal from 'sweetalert2';
@@ -10,6 +10,7 @@ const AllUsers = () => {
     const [users, setUsers] = useState([]);
     const [isAdmin, adminLoading] = useAdmin();
     const navigate = useNavigate();
+    const axiosSecure = useAxiosSecure();
 
     const toBanglaNumber = (number) => {
         const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];

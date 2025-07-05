@@ -11,7 +11,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '../../firebase.config';
 import Swal from 'sweetalert2';
-import { axiosSecure } from '../useAxiosSecure'
+import useAxiosPublic from '../useAxiosPublic';
 
 // Create AuthContext
 export const AuthContext = createContext();
@@ -19,6 +19,7 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const axiosPublic = useAxiosPublic();
 
     const signup = (email, password) => {
         setLoading(true);
@@ -39,8 +40,6 @@ const AuthProvider = ({ children }) => {
     const logout = async () => {
         setLoading(true);
         try {
-            // withCredentials: true is already set on axiosSecure instance
-            await axiosSecure.post('/api/logout', {});
             await signOut(auth);
             setUser(null);
             Swal.fire({
@@ -57,6 +56,7 @@ const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     };
+
     const resetPassword = (email) => {
         return sendPasswordResetEmail(auth, email);
     };
@@ -69,54 +69,27 @@ const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const unSubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            setLoading(true);
-
-            try {
-                if (currentUser?.email) {
-                    setUser(currentUser);
-
-                    try {
-                        // withCredentials: true is already set on axiosSecure instance
-                        await axiosSecure.post('/users', {
-                            uid: currentUser.uid,
-                            email: currentUser.email,
-                            displayName: currentUser.displayName || '',
-                            role: 'user'
-                        });
-
-                        // withCredentials: true is already set on axiosSecure instance
-                        await axiosSecure.post('/jwt', {
-                            email: currentUser.email,
-                            uid: currentUser.uid,
-                        });
-
-                    } catch (backendErr) {
-                        console.error('Backend sync or JWT error:', backendErr);
-                        setUser(null);
-                        await signOut(auth);
-                        // withCredentials: true is already set on axiosSecure instance
-                        await axiosSecure.post('/api/logout', {});
+            setUser(currentUser);
+            if (currentUser) {
+                const userInfo = { email: currentUser.email, uid: currentUser.uid };
+                try {
+                    const res = await axiosPublic.post('/jwt', userInfo); // ✅ fixed this line
+                    if (res.data.token) {
+                        localStorage.setItem('token', res.data.token);
                     }
-
-                } else {
-                    setUser(null);
-                    try {
-                        // withCredentials: true is already set on axiosSecure instance
-                        await axiosSecure.post('/api/logout', {});
-                    } catch (logoutErr) {
-                        console.warn("Failed to clear session:", logoutErr);
-                    }
+                } catch (error) {
+                    console.error('Error fetching token:', error);
+                } finally {
+                    setLoading(false);
                 }
-            } catch (globalErr) {
-                console.error("Auth state change error:", globalErr);
-                Swal.fire('Error!', 'An unexpected authentication error occurred.', 'error');
-            } finally {
+            } else {
+                localStorage.removeItem('token');
                 setLoading(false);
             }
         });
 
         return () => unSubscribe();
-    }, []);
+    }, [axiosPublic]);
 
     const authData = {
         user,
