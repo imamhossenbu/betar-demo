@@ -118,7 +118,10 @@ const AuthProvider = ({ children }) => {
                     setLoading(false);
                 }
             } else {
-                localStorage.removeItem('token');
+                setTimeout(() => {
+                    localStorage.removeItem('token');
+                    setUser(null);
+                }, 2000); // Delay avoids accidental logout due to Firebase delay
                 setLoading(false);
             }
         });

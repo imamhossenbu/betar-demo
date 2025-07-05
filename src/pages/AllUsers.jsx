@@ -82,6 +82,7 @@ const AllUsers = () => {
                     <thead className="bg-blue-200 text-gray-700">
                         <tr>
                             <th className="px-4 py-2 border">#</th>
+                            <th className="px-4 py-2 border">নাম</th>
                             <th className="px-4 py-2 border">ইমেইল</th>
                             <th className="px-4 py-2 border">ভূমিকা</th>
                             <th className="px-4 py-2 border">অ্যাকশন</th>
@@ -91,6 +92,7 @@ const AllUsers = () => {
                         {users.map((user, index) => (
                             <tr key={user._id} className="border-t">
                                 <td className="px-4 py-2 border">{toBanglaNumber(index + 1)}</td>
+                                <td className="px-4 py-2 border">{user?.displayName || ''}</td>
                                 <td className="px-4 py-2 border">{user.email}</td>
                                 <td className="px-4 py-2 border">{user.role || 'user'}</td>
                                 <td className="px-4 py-2 border">
