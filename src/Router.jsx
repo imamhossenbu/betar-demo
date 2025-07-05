@@ -18,25 +18,10 @@ import AllUsers from './pages/AllUsers';
 import AdminRoute from './hooks/AdminRoute';
 
 const AppRouter = () => {
-    const { user, loading, logout } = useContext(AuthContext); // ✅ use context logout
+    const { user, loading } = useContext(AuthContext); // ✅ use context logout
     const [scheduleData, setScheduleData] = useState([]);
     const [selectedCeremonies, setSelectedCeremonies] = useState([]);
 
-    const handleLogout = async () => {
-        try {
-            await logout(); // ✅ logout handles Firebase and clears token
-            setScheduleData([]); // clear table data
-            Swal.fire({
-                icon: 'success',
-                title: 'Logged Out!',
-                text: 'You have been successfully logged out.',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        } catch (err) {
-            Swal.fire('Error!', 'Failed to log out. Try again.', 'error');
-        }
-    };
 
 
     const isAuthenticated = !!user;
@@ -57,7 +42,7 @@ const AppRouter = () => {
         {
             path: '/',
             element: isAuthenticated ? (
-                <Layout setScheduleData={setScheduleData} handleLogout={handleLogout} />
+                <Layout setScheduleData={setScheduleData} />
             ) : (
                 <Navigate to="/login" replace />
             ),

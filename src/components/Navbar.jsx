@@ -17,11 +17,12 @@ const days = [
     { name: 'রবিবার', key: 'রবিবার' },
 ];
 
-const Navbar = ({ setScheduleData, handleLogout }) => {
+const Navbar = ({ setScheduleData }) => {
     const [openDay, setOpenDay] = useState(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
     const axiosPublic = useAxiosPublic();
+    const { logout } = useContext(AuthContext);
 
     const { user } = useContext(AuthContext); // Get current logged in user from context
 
@@ -85,9 +86,21 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
         }
     };
 
-    const handleLogoutClick = () => {
-        handleLogout(); // Calls your passed logout function
-        navigate('/login');
+
+    const handleLogout = async () => {
+        try {
+            await logout(); // ✅ logout handles Firebase and clears token
+            setScheduleData([]); // clear table data
+            Swal.fire({
+                icon: 'success',
+                title: 'Logged Out!',
+                text: 'You have been successfully logged out.',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } catch (err) {
+            Swal.fire('Error!', 'Failed to log out. Try again.', 'error');
+        }
     };
 
     return (
@@ -147,7 +160,7 @@ const Navbar = ({ setScheduleData, handleLogout }) => {
                     <NavLink to="/" className="text-blue-800 font-semibold hover:bg-blue-200 px-3 py-1.5 rounded-md text-sm md:text-base w-full text-center" onClick={closeMobileMenu}>
                         ড্যাশবোর্ড
                     </NavLink>
-                    <button onClick={handleLogoutClick} className="text-red-600 font-semibold hover:bg-red-100 px-3 py-1.5 rounded-md text-sm md:text-base w-full text-center">
+                    <button onClick={handleLogout} className="text-red-600 font-semibold hover:bg-red-100 px-3 py-1.5 rounded-md text-sm md:text-base w-full text-center">
                         লগআউট
                     </button>
                 </div>
