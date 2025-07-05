@@ -21,21 +21,53 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const axiosPublic = useAxiosPublic();
 
-    const signup = (email, password) => {
+    const signup = async (email, password, name) => {
         setLoading(true);
-        return createUserWithEmailAndPassword(auth, email, password);
+        try {
+            // Step 1: Firebase Auth Signup
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+            // Step 2: Set displayName in Firebase
+            await updateProfile(auth.currentUser, {
+                displayName: name,
+            });
+
+            // Step 3: Add user to MongoDB via backend
+            await axiosPublic.post('/users', {
+                email,
+                displayName: name,
+                role: 'user', // optional default role
+            });
+
+            // Step 4: Get JWT token
+            const tokenRes = await axiosPublic.post('/jwt', {
+                email,
+                uid: userCredential.user.uid,
+            });
+
+            // Step 5: Store token
+            if (tokenRes.data.token) {
+                localStorage.setItem('token', tokenRes.data.token);
+            }
+
+            // Set user state
+            setUser(userCredential.user);
+            Swal.fire('Success!', 'Signup successful!', 'success');
+        } catch (error) {
+            console.error('Signup error:', error);
+            Swal.fire('Error', error.message || 'Signup failed', 'error');
+        } finally {
+            setLoading(false);
+        }
     };
+
 
     const login = (email, password) => {
         setLoading(true);
         return signInWithEmailAndPassword(auth, email, password);
     };
 
-    const manageProfile = (name) => {
-        return updateProfile(auth.currentUser, {
-            displayName: name,
-        });
-    };
+
 
     const logout = async () => {
         setLoading(true);
@@ -98,7 +130,6 @@ const AuthProvider = ({ children }) => {
         signup,
         login,
         logout,
-        manageProfile,
         googleLogin,
         resetPassword
     };

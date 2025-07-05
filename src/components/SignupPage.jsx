@@ -11,7 +11,7 @@ const SignupPage = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const { signup, googleLogin, manageProfile, loading } = useContext(AuthContext);
+    const { signup, googleLogin, loading } = useContext(AuthContext);
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -22,8 +22,7 @@ const SignupPage = () => {
         }
 
         try {
-            const result = await signup(email, password);
-            await manageProfile(name);
+            await signup(email, password, name); // ✅ name passed here
             Swal.fire('Success!', 'সাইনআপ সফল হয়েছে! এখন লগইন করুন।', 'success');
             navigate('/login');
         } catch (error) {
@@ -31,6 +30,7 @@ const SignupPage = () => {
             Swal.fire('Error!', error.message || 'সাইনআপ ব্যর্থ হয়েছে।', 'error');
         }
     };
+
 
     const handleGoogleSignup = async () => {
         try {
