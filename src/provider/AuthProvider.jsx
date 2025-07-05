@@ -26,6 +26,7 @@ const AuthProvider = ({ children }) => {
         try {
             // Step 1: Firebase Auth Signup
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const uid = userCredential.user.uid;
 
             // Step 2: Set displayName in Firebase
             await updateProfile(auth.currentUser, {
@@ -35,14 +36,15 @@ const AuthProvider = ({ children }) => {
             // Step 3: Add user to MongoDB via backend
             await axiosPublic.post('/users', {
                 email,
-                displayName: name,
+                uid, // ✅ include UID here
+                displayName: name || auth.currentUser.displayName,
                 role: 'user', // optional default role
             });
 
             // Step 4: Get JWT token
             const tokenRes = await axiosPublic.post('/jwt', {
                 email,
-                uid: userCredential.user.uid,
+                uid,
             });
 
             // Step 5: Store token
@@ -60,6 +62,7 @@ const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     };
+
 
 
     const login = (email, password) => {

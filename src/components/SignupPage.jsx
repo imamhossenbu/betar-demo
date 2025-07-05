@@ -24,7 +24,7 @@ const SignupPage = () => {
         try {
             await signup(email, password, name); // ✅ name passed here
             Swal.fire('Success!', 'সাইনআপ সফল হয়েছে! এখন লগইন করুন।', 'success');
-            navigate('/login');
+            navigate('/');
         } catch (error) {
             console.error('Signup error:', error.message);
             Swal.fire('Error!', error.message || 'সাইনআপ ব্যর্থ হয়েছে।', 'error');
