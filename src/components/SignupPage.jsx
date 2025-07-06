@@ -4,14 +4,16 @@ import Swal from 'sweetalert2';
 import { AuthContext } from '../provider/AuthProvider';
 import Loading from './Loading';
 import { FaGoogle } from 'react-icons/fa6';
+import useAxiosPublic from '../useAxiosPublic';
 
 const SignupPage = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const axiosPublic = useAxiosPublic();
 
-    const { signup, googleLogin, loading } = useContext(AuthContext);
+    const { signup, googleLogin, loading, setUser } = useContext(AuthContext);
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -34,9 +36,39 @@ const SignupPage = () => {
 
     const handleGoogleSignup = async () => {
         try {
-            await googleLogin();
+            const result = await googleLogin(); // Firebase Google login
+            const user = result.user;
+
+            const email = user.email;
+            const uid = user.uid;
+            const name = user.displayName;
+
+            // Step 1: Save user to the database
+            await axiosPublic.post('/users', {
+                email,
+                uid,
+                displayName: name,
+                role: 'user' // default role
+            });
+
+            // Step 2: Get JWT token
+            const tokenRes = await axiosPublic.post('/jwt', {
+                email,
+                uid
+            });
+
+            // Step 3: Store JWT token
+            if (tokenRes.data.token) {
+                localStorage.setItem('token', tokenRes.data.token);
+            }
+
+            // Step 4: Set user context
+            setUser(user);
+
+            // Step 5: Navigate and notify
             Swal.fire("গুগল লগইন সম্পন্ন হয়েছে!", '', 'success');
             navigate('/');
+
         } catch (error) {
             console.error('Google login failed:', error);
             Swal.fire('Error!', error.message || 'গুগল লগইন ব্যর্থ হয়েছে।', 'error');

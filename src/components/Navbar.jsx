@@ -142,6 +142,7 @@ const Navbar = ({ setScheduleData }) => {
                             >
                                 {day.name}
                             </button>
+
                             {openDay === day.key && (
                                 <div className="md:absolute z-10 bg-white shadow-md rounded-md overflow-hidden min-w-[120px] mt-1 md:mt-2">
                                     <button className="block w-full text-left px-4 py-2 hover:bg-blue-100 text-sm" onClick={() => handleLoadPrograms(day.key, 'সকাল')}>
@@ -154,6 +155,7 @@ const Navbar = ({ setScheduleData }) => {
                             )}
                         </div>
                     ))}
+                    <button className="text-blue-800 font-semibold hover:bg-blue-200 px-3 py-1.5 rounded-md focus:outline-none text-sm md:text-base  text-left md:text-center">বিশেষ</button>
                 </div>
 
                 <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 sm:gap-4 md:justify-end md:flex-grow-0">
