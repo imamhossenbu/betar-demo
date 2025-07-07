@@ -5,7 +5,7 @@ import { AuthContext } from './provider/AuthProvider';
 
 // Create the instance once
 const axiosSecure = axios.create({
-  baseURL: 'https://betar-server.onrender.com',
+  baseURL: 'https://server.equesheet.com',
 });
 
 // Register interceptors only once

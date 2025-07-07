@@ -3,7 +3,7 @@ import axios from 'axios';
 
 
 const axiosSecurePublic = axios.create({
-    baseURL: 'https://betar-server.onrender.com'
+    baseURL: 'https://server.equesheet.com'
 })
 const useAxiosPublic = () => {
     return axiosSecurePublic;
