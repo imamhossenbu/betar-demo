@@ -1,20 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import EntryModal from './EntryModal'; // Assuming EntryModal is in the same directory
+import EntryModal from './EntryModal';
 import { FaEdit, FaRegFileAlt } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import useAxiosSecure from '../useAxiosSecure'
-
-import {
-    getDate,
-} from 'bangla-calendar';
+import useAxiosSecure from '../useAxiosSecure';
+import { getDate } from 'bangla-calendar';
 import useAdmin from '../hooks/useAdmin';
 import Loading from './Loading';
 
 
-const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies }) => {
+// NewTable component now accepts a 'scheduleType' prop
+const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies, scheduleType }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [modalInitialData, setModalInitialData] = useState({});
@@ -22,24 +20,17 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
     const axiosSecure = useAxiosSecure();
 
-
-    // প্রতি রো-এর জন্য CD Cut অনুসন্ধানের লোডিং অবস্থা ট্র্যাক করার জন্য নতুন স্টেট
     const [loadingCdCutIndex, setLoadingCdCutIndex] = useState(null);
-    const debounceTimeoutRefs = useRef({}); // প্রতিটি রো-এর জন্য ডিবাউন্স টাইমআউট রেফারেন্স সংরক্ষণ করার জন্য
+    const debounceTimeoutRefs = useRef({});
 
-    // নতুন স্টেট যা প্রদর্শনের জন্য বাংলা সিরিয়াল সহ ডেটা রাখবে
     const [displayedScheduleData, setDisplayedScheduleData] = useState([]);
 
     const navigate = useNavigate();
     const location = useLocation();
     const { shift: urlShiftKey, dayKey: urlDayKey } = useParams();
 
-    const queryParams = new URLSearchParams(location.search);
-    // const dayName = urlDayKey ? decodeURIComponent(urlDayKey) : 'দিন';
-
-
-
-    const banglaShift = urlShiftKey === 'সকাল' ? 'সকাল' : (urlShiftKey === 'বিকাল' ? 'বিকাল' : urlShiftKey);
+    // Determine if it's a special schedule based on the scheduleType prop
+    const isSpecialSchedule = scheduleType === 'special';
 
     // Utility function to convert English numbers to Bengali numbers
     const convertToBengaliNumber = (num) => {
@@ -55,7 +46,6 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     const convertToEnglishNumber = (num) => {
         const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         const bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-        // Ensure num is treated as a string to handle mixed or non-numeric Bengali characters
         return String(num).split('').map(digit => {
             const index = bengaliNumbers.indexOf(digit);
             return index !== -1 ? englishNumbers[index] : digit;
@@ -63,42 +53,53 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     };
 
     // useEffect to format scheduleData for display when it changes
-    // এটি নিশ্চিত করবে যে প্রাথমিক লোড এবং scheduleData prop এর যেকোনো পরিবর্তনের সময় serial গুলো বাংলায় থাকবে।
     useEffect(() => {
         const formattedForDisplay = scheduleData.map(item => {
-            // যদি item.serial থাকে এবং এটি একটি স্ট্রিং হয় এবং এটি সংখ্যাসূচক ইংরেজি হয়
-            if (item.serial && typeof item.serial === 'string' && /^\d+$/.test(item.serial)) {
-                return { ...item, serial: convertToBengaliNumber(item.serial) };
+            const newItem = { ...item };
+
+            // Convert serial to Bengali for display
+            if (newItem.serial && typeof newItem.serial === 'string' && /^\d+$/.test(newItem.serial)) {
+                newItem.serial = convertToBengaliNumber(newItem.serial);
             }
-            // যদি এটি ইতিমধ্যেই বাংলা, অথবা খালি, অথবা অ-সংখ্যাসূচক স্ট্রিং হয়, তাহলে যেমন আছে তেমনই রাখুন
-            return item;
+
+            // IMPORTANT: Only clear song details for initial display if it's from 'addSpecialSongPage'
+            // AND the cdCut is currently empty. This prevents clearing data after a successful lookup.
+            if (newItem.programType === 'Song' && newItem.source === 'addSpecialSongPage' && !newItem.cdCut) {
+                newItem.programDetails = '';
+                newItem.artist = '';
+                newItem.lyricist = '';
+                newItem.composer = '';
+                newItem.duration = '';
+            }
+            return newItem;
         });
         setDisplayedScheduleData(formattedForDisplay);
-    }, [scheduleData]); // scheduleData prop পরিবর্তিত হলে পুনরায় চালান
+    }, [scheduleData]);
 
 
-    // টেবিল রো-এর মধ্যে CD Cut ইনপুট পরিবর্তন হলে ডেটা লোড করার হ্যান্ডলার
+    // Handle CD Cut input change and fetch song data
     const handleInlineCdCutChange = (e, index) => {
         const newCdCut = e.target.value;
+        const currentItem = scheduleData[index]; // Get the item from the original scheduleData
+
+        // Update the schedule data immediately with the new CD Cut value
         setScheduleData(prevSchedule => {
             const updatedSchedule = [...prevSchedule];
-            // শুধু cdCut আপডেট করুন, বাকি ফিল্ড API কল থেকে আসবে
             updatedSchedule[index] = { ...updatedSchedule[index], cdCut: newCdCut };
             return updatedSchedule;
         });
 
-        // যদি আগের কোনো ডিবাউন্স টাইমআউট থাকে তা পরিষ্কার করুন
         if (debounceTimeoutRefs.current[index]) {
             clearTimeout(debounceTimeoutRefs.current[index]);
         }
 
-        // যদি CD Cut মান থাকে এবং প্রোগ্রাম টাইপ 'Song' হয় তবে API কল করুন
-        if (newCdCut && scheduleData[index]?.programType === 'Song') {
-            setLoadingCdCutIndex(index); // এই রো-এর জন্য লোডিং সেট করুন
-
+        // Now, trigger API call if it's a Song program type AND a newCdCut value is present,
+        // regardless of the source.
+        if (newCdCut && currentItem?.programType === 'Song') { // Source check removed here
+            setLoadingCdCutIndex(index);
             debounceTimeoutRefs.current[index] = setTimeout(async () => {
                 try {
-                    const response = await axiosSecure.get(`/api/songs/byCdCut/${newCdCut}`);
+                    const response = await axiosSecure.get(`/api/specialSongs/byCdCut/${newCdCut}`);
                     if (response.data) {
                         setScheduleData(prevSchedule => {
                             const updatedSchedule = [...prevSchedule];
@@ -109,14 +110,14 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                 lyricist: response.data.lyricist || '',
                                 composer: response.data.composer || '',
                                 duration: response.data.duration || '',
-                                programType: response.data.programType || 'Song', // নিশ্চিত করুন যে এটি 'Song'
+                                programType: response.data.programType || 'Song',
+                                // Do NOT update 'source' here, it remains as is
                             };
                             return updatedSchedule;
                         });
                         Swal.fire('Success', `CD Cut ${newCdCut} এর ডেটা লোড হয়েছে!`, 'success');
                     } else {
                         Swal.fire('Info', `CD Cut ${newCdCut} এর জন্য কোনো ডেটা পাওয়া যায়নি।`, 'info');
-                        // যদি ডেটা না পাওয়া যায় তাহলে গান-নির্দিষ্ট ফিল্ডগুলি পরিষ্কার করুন
                         setScheduleData(prevSchedule => {
                             const updatedSchedule = [...prevSchedule];
                             updatedSchedule[index] = {
@@ -126,7 +127,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                 lyricist: '',
                                 composer: '',
                                 duration: '',
-                                programType: 'General', // ডেটা না পাওয়া গেলে General এ সেট করুন
+                                // Keep programType as Song if it was originally Song
                             };
                             return updatedSchedule;
                         });
@@ -135,113 +136,102 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     console.error("সিডি কাটের ডেটা আনতে ব্যর্থ:", error);
                     Swal.fire('Error', 'সিডি কাটের ডেটা আনতে ব্যর্থ হয়েছে।', 'error');
                 } finally {
-                    setLoadingCdCutIndex(null); // লোডিং শেষ
+                    setLoadingCdCutIndex(null);
                 }
-            }, 1000); // 500ms debounce
-        } else {
-            // যদি ইনপুট খালি হয় বা প্রোগ্রাম টাইপ Song না হয়, তাহলে লোডিং বন্ধ করুন
+            }, 1000);
+        } else if (!newCdCut && currentItem?.programType === 'Song') {
+            // If CD Cut is cleared for any Song program, also clear associated song details
             setLoadingCdCutIndex(null);
-            // যদি CD Cut খালি করা হয়, তবে গান-নির্দিষ্ট ফিল্ডগুলি পরিষ্কার করুন
-            if (!newCdCut) {
-                setScheduleData(prevSchedule => {
-                    const updatedSchedule = [...prevSchedule];
-                    updatedSchedule[index] = {
-                        ...updatedSchedule[index],
-                        programDetails: '',
-                        artist: '',
-                        lyricist: '',
-                        composer: '',
-                        duration: '',
-                    };
-                    return updatedSchedule;
-                });
-            }
+            setScheduleData(prevSchedule => {
+                const updatedSchedule = [...prevSchedule];
+                updatedSchedule[index] = {
+                    ...updatedSchedule[index],
+                    programDetails: '',
+                    artist: '',
+                    lyricist: '',
+                    composer: '',
+                    duration: '',
+                };
+                return updatedSchedule;
+            });
+        } else {
+            setLoadingCdCutIndex(null);
         }
     };
 
 
-    // Drag and drop শেষ হলে সিরিয়াল এবং orderIndex আপডেট করার হ্যান্ডলার (এবং ডেটাবেসে সংরক্ষণ)
+    // Handles drag and drop to reorder items and updates backend
     const handleDragEnd = async (result) => {
-        if (!result.destination) return; // যদি ড্রপ করার স্থান না থাকে, তাহলে কিছু করবেন না
+        if (!result.destination) return;
 
-        const items = Array.from(scheduleData); // সময়সূচী ডেটার একটি পরিবর্তনযোগ্য কপি তৈরি করুন
-        const [reorderedItem] = items.splice(result.source.index, 1); // ড্র্যাগ করা আইটেমটি সরান
-        items.splice(result.destination.index, 0, reorderedItem); // নতুন অবস্থানে এটি ঢোকান
+        const items = Array.from(scheduleData);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
 
-        const updatesForBackend = []; // ডেটাবেসে আপডেট করার জন্য আইটেম সংরক্ষণ করবে
-        let serialCounter = 1; // শুধুমাত্র যাদের serial আছে তাদের জন্য কাউন্টার
+        const updatesForBackend = [];
+        let serialCounter = 1;
 
         const newSchedule = items.map((item, newIndex) => {
-            // Find the original item from the initial scheduleData to determine if it had a serial
-            const originalItem = scheduleData.find(s => s._id === item._id); // Use original scheduleData for comparison
+            const originalItem = scheduleData.find(s => s._id === item._id);
 
             if (!originalItem) {
-                // এটি এমন একটি আইটেম যা originalScheduleData-তে পাওয়া যায়নি।
-                // এটি এমন ক্ষেত্রে ঘটতে পারে যেখানে একটি নতুন আইটেম যোগ করা হয়েছে কিন্তু এখনও ডাটাবেসে সেভ করা হয়নি।
-                // এই ধরনের আইটেমগুলির জন্য serial বা orderIndex পরিবর্তন করা হবে না।
                 return item;
             }
 
-            let serialForDisplay = originalItem.serial; // ডিফল্ট হিসেবে original serial থাকবে
-            let serialForBackend = originalItem.serial; // ডিফল্ট হিসেবে original serial থাকবে
+            let serialForDisplay = originalItem.serial;
+            let serialForBackend = originalItem.serial;
 
-            // যদি originalItem-এর serial থাকে (অর্থাৎ খালি নয়), তাহলেই re-index করুন
-            // এখানে originalItem.serial-এর .trim() ব্যবহার করা হয়েছে যাতে শুধুমাত্র whitespace-কে empty ধরা হয়।
             if (originalItem.serial && originalItem.serial.trim() !== '') {
-                serialForDisplay = convertToBengaliNumber(serialCounter); // নতুন বাংলা সিরিয়াল
-                serialForBackend = convertToEnglishNumber(serialCounter); // নতুন ইংরেজি সিরিয়াল
-                serialCounter++; // কাউন্টার বৃদ্ধি করুন
+                serialForDisplay = convertToBengaliNumber(serialCounter);
+                serialForBackend = convertToEnglishNumber(serialCounter);
+                serialCounter++;
             }
-            // else { serialForDisplay and serialForBackend remain as original empty strings, which is the desired behavior }
 
-            // orderIndex সবসময় আপডেটেড ক্রম অনুযায়ী সেট হবে, কারণ এটি ভিজ্যুয়াল অর্ডারের জন্য অপরিহার্য।
             const newOrderIndex = newIndex;
 
-            // ডেটাবেসের জন্য আপডেট করা আইটেম
             const updatedItemForBackend = {
                 _id: item._id,
-                orderIndex: newOrderIndex, // Always update orderIndex for persistence
+                orderIndex: newOrderIndex,
+                type: scheduleType, // Pass the schedule type to the backend
             };
 
-            // যদি সিরিয়াল পরিবর্তিত হয়, তবে সিরিয়ালও আপডেট payloads এ যোগ করুন
             const originalSerialBackendFormat = originalItem.serial ? convertToEnglishNumber(originalItem.serial) : '';
             if (serialForBackend !== originalSerialBackendFormat) {
                 updatedItemForBackend.serial = serialForBackend;
             }
 
-            // যদি orderIndex বা serial পরিবর্তিত হয়, তবেই backend আপডেটের জন্য push করুন
             if (newOrderIndex !== originalItem.orderIndex || (updatedItemForBackend.hasOwnProperty('serial') && updatedItemForBackend.serial !== originalSerialBackendFormat)) {
                 updatesForBackend.push(updatedItemForBackend);
             }
 
             return {
                 ...item,
-                serial: serialForDisplay, // Local state এর জন্য বাংলা/খালি সিরিয়াল
-                orderIndex: newOrderIndex, // Local state এর জন্য নতুন orderIndex
+                serial: serialForDisplay,
+                orderIndex: newOrderIndex,
             };
         });
 
-        setScheduleData(newSchedule); // Local state অবিলম্বে আপডেট করুন
+        setScheduleData(newSchedule);
 
-        // ডেটাবেসে আপডেট পাঠান
         if (updatesForBackend.length > 0) {
             try {
                 const updatePromises = updatesForBackend.map(update => {
-                    const { _id, ...fieldsToUpdate } = update; // _id আলাদা করুন
-                    return axiosSecure.put(`/api/programs/${_id}`, fieldsToUpdate);
+                    const { _id, ...fieldsToUpdate } = update;
+                    // CORRECTED API ENDPOINT: Use /api/special/:id for PUT requests
+                    return axiosSecure.put(`/api/special/${_id}`, fieldsToUpdate);
                 });
                 await Promise.all(updatePromises);
                 Swal.fire('Success', 'তালিকার ক্রম সফলভাবে আপডেট হয়েছে!', 'success');
-            }
-            catch (error) {
+            } catch (error) {
                 console.error('সিরিয়াল/ক্রম আপডেট করতে ব্যর্থ:', error);
                 Swal.fire('Error', 'তালিকার ক্রম আপডেট করতে ব্যর্থ হয়েছে।', 'error');
             }
         }
     };
 
-    const handleDelete = (indexToDelete) => {
-        const itemToDelete = displayedScheduleData[indexToDelete]; // Use displayed data for deletion
+    // Handles deletion of an item and updates backend
+    const handleDelete = async (indexToDelete) => {
+        const itemToDelete = displayedScheduleData[indexToDelete];
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -253,131 +243,131 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axiosSecure.delete(`/api/programs/${itemToDelete._id}`);
-                    const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete); // Filter original scheduleData
+                    // CORRECTED API ENDPOINT: Use /api/special/:id for DELETE requests
+                    await axiosSecure.delete(`/api/special/${itemToDelete._id}?type=${scheduleType}`);
+                    const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete);
 
                     let serialCounter = 1;
-                    const reIndexedSchedule = updatedSchedule.map((item, newIndex) => { // newIndex here is important for recalculating orderIndex
-                        // If item had a serial, re-index it.
+                    const reIndexedSchedule = updatedSchedule.map((item, newIndex) => {
                         if (item.serial && item.serial.trim() !== '') {
                             return {
                                 ...item,
                                 serial: convertToBengaliNumber(serialCounter++),
-                                orderIndex: newIndex,// Also update orderIndex for remaining items
-                                type: scheduleType,
+                                orderIndex: newIndex
                             };
                         }
-                        return { ...item, orderIndex: newIndex }; // Keep serial empty if it was empty, but update orderIndex
+                        return { ...item, orderIndex: newIndex };
                     });
-                    setScheduleData(reIndexedSchedule); // This will trigger the useEffect for displayedScheduleData
+                    setScheduleData(reIndexedSchedule);
 
-                    const updatedSelectedCeremonies = selectedCeremonies.filter(
-                        (item) => item._id !== itemToDelete._id
-                    );
+                    // Ensure selectedCeremonies is an array before filtering
+                    const updatedSelectedCeremonies = Array.isArray(selectedCeremonies)
+                        ? selectedCeremonies.filter((item) => item._id !== itemToDelete._id)
+                        : []; // Initialize as empty array if not already an array
                     setSelectedCeremonies(updatedSelectedCeremonies);
 
                     Swal.fire('Deleted!', 'The entry has been deleted.', 'success');
 
-                    // After deletion, we should also send a bulk update for orderIndex to backend
-                    // to ensure persistent reordering.
                     const updatesForBackendAfterDelete = reIndexedSchedule.map(item => ({
                         _id: item._id,
-                        serial: (item.serial && item.serial.trim() !== '') ? convertToEnglishNumber(item.serial) : '', // Ensure serial is English for backend
-                        orderIndex: item.orderIndex
+                        serial: (item.serial && item.serial.trim() !== '') ? convertToEnglishNumber(item.serial) : '',
+                        orderIndex: item.orderIndex,
+                        type: scheduleType, // Include scheduleType for re-indexing updates
                     }));
 
                     if (updatesForBackendAfterDelete.length > 0) {
                         try {
                             const updatePromises = updatesForBackendAfterDelete.map(update => {
                                 const { _id, ...fieldsToUpdate } = update;
-                                return axiosSecure.put(`/api/programs/${_id}`, fieldsToUpdate);
+                                // CORRECTED API ENDPOINT: Use /api/special/:id for PUT requests
+                                return axiosSecure.put(`/api/special/${_id}`, fieldsToUpdate);
                             });
                             await Promise.all(updatePromises);
-                            // console.log("Backend orderIndexes updated after deletion.");
                         } catch (updateError) {
                             console.error("Failed to update backend orderIndexes after deletion:", updateError);
-                            // Handle this silent failure if necessary
                         }
                     }
 
                 } catch (error) {
+                    // This catch block will now correctly fire if the DELETE operation itself fails.
+                    console.error('Error deleting entry:', error.response?.data || error.message);
                     Swal.fire('Error!', 'Failed to delete entry.', 'error');
                 }
             }
         });
     };
 
+    // Opens the modal for editing an existing item
     const handleEdit = (indexToEdit) => {
         setCurrentEditIndex(indexToEdit);
-        // Ensure modalInitialData has Bengali serial if original data had English
         const dataForModal = {
             ...scheduleData[indexToEdit],
-            // Convert existing serial from potentially English to Bengali for display in modal
             serial: (scheduleData[indexToEdit].serial && String(scheduleData[indexToEdit].serial).trim() !== '')
                 ? convertToBengaliNumber(scheduleData[indexToEdit].serial)
-                : '' // Keep empty if original was empty
+                : ''
         };
         setModalInitialData(dataForModal);
         setIsModalOpen(true);
     };
 
+    // Opens the modal for adding a new item
     const handleAddNewClick = () => {
         setCurrentEditIndex(null);
+        const isGeneral = true;
 
-
-
-        // Populate initial data for the modal
         const baseData = {
-            serial: '', // Default to empty string for new entries
+            serial: '',
             broadcastTime: '',
             programDetails: '',
-            day: dayName,
-            shift: banglaShift,
-            period: banglaShift, // Initialized with banglaShift
-            programType: 'General', // Default program type
+            // Conditionally include day, shift, period based on scheduleType
+            day: isSpecialSchedule ? '' : (urlDayKey || ''),
+            shift: isSpecialSchedule ? '' : (urlShiftKey || ''),
+            period: isGeneral ? (urlShiftKey || '') : '',
+            programType: 'General',
             artist: '',
             lyricist: '',
             composer: '',
             cdCut: '',
             duration: '',
-            orderIndex: scheduleData.length // New items get the next order index
+            orderIndex: scheduleData.length,
+            source: 'entryModal', // Source for new entries from this modal
         };
 
-        setModalInitialData(baseData); // Simply use baseData
+        setModalInitialData(baseData);
         setIsModalOpen(true);
     };
 
+    // Handles saving data from the modal (add or edit)
     const handleSaveModalData = async (savedData) => {
         const payload = { ...savedData };
+        payload.type = scheduleType; // Add scheduleType to the payload for backend
 
-        // Serial conversion to English for backend happens here before API call.
-        const bengaliNumericRegex = /^[\u09E৬-\u09EF]+$/;
+        const bengaliNumericRegex = /^[\u09E6-\u09EF]+$/; // Corrected Bengali number regex
 
-        // Only convert serial if it's a Bengali numeric string, otherwise keep it as is (including empty)
+        // Convert serial to English if needed
         if (typeof payload.serial === 'string' && bengaliNumericRegex.test(payload.serial)) {
             payload.serial = convertToEnglishNumber(payload.serial);
         } else {
-            // If it's an English number string, or mixed, or empty, keep it as is.
-            // Ensure it's explicitly a string even if it was number 0 or undefined.
             payload.serial = String(payload.serial || '');
         }
 
         if (currentEditIndex !== null) {
             // Update existing program
             try {
-                // Ensure orderIndex is maintained when updating
                 payload.orderIndex = scheduleData[currentEditIndex].orderIndex;
+                // Preserve the original source when updating
+                payload.source = scheduleData[currentEditIndex].source || 'entryModal'; // Default to entryModal if source is missing
 
-                await axiosSecure.put(`/api/programs/${scheduleData[currentEditIndex]._id}`, payload);
+                await axiosSecure.put(`/api/special/${scheduleData[currentEditIndex]._id}`, payload);
+
                 const updatedSchedule = [...scheduleData];
-                // Local state update: ensure serial is Bengali for display after successful save
                 updatedSchedule[currentEditIndex] = {
                     ...updatedSchedule[currentEditIndex],
                     ...payload,
-                    // Convert back to Bengali for local display, but only if it's not an empty string
-                    serial: (payload.serial === '' ? '' : convertToBengaliNumber(payload.serial))
+                    serial: payload.serial === '' ? '' : convertToBengaliNumber(payload.serial)
                 };
-                setScheduleData(updatedSchedule); // এই আপডেট useEffect কে ট্রিগার করবে
+
+                setScheduleData(updatedSchedule);
                 setIsModalOpen(false);
                 Swal.fire('Success', 'Program updated successfully!', 'success');
             } catch (err) {
@@ -387,26 +377,41 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         } else {
             // Add new program
             try {
-                payload.day = dayName;
-                payload.shift = banglaShift;
-                payload.period = payload.period;
-                payload.orderIndex = scheduleData.length; // New item gets the last order index
+                if (!isSpecialSchedule) {
+                    // Regular schedule
+                    payload.day = urlDayKey;
+                    payload.shift = urlShiftKey;
+                    payload.period = payload.period || urlShiftKey || '';
+                } else {
+                    // Special schedule
+                    payload.day = '';
+                    payload.shift = '';
+                    if (payload.programType === 'Song') {
+                        payload.period = ''; // Not required
+                    } else {
+                        // Required for 'General' in special
+                        payload.period = payload.period || ' ';
+                    }
+                }
 
-                // Before sending to backend, ensure serial is in correct format (handled by general conversion above)
+                payload.orderIndex = scheduleData.length;
+                // The 'source' field is already set in handleAddNewClick for new entries from modal
+
+                // Re-check Bengali serial conversion
                 if (typeof payload.serial === 'string' && bengaliNumericRegex.test(payload.serial)) {
                     payload.serial = convertToEnglishNumber(payload.serial);
                 } else {
                     payload.serial = String(payload.serial || '');
                 }
 
-                const res = await axiosSecure.post('/api/programs', payload);
-                // After adding, ensure serial is Bengali for local state, as backend might return English
+                const res = await axiosSecure.post('/api/special', payload);
+
                 const newProgram = {
                     ...res.data,
-                    // Convert to Bengali for display, but only if it's not an empty string
-                    serial: (res.data.serial === '' ? '' : convertToBengaliNumber(res.data.serial))
+                    serial: res.data.serial === '' ? '' : convertToBengaliNumber(res.data.serial)
                 };
-                setScheduleData(prev => [...prev, newProgram]); // এই আপডেট useEffect কে ট্রিগার করবে
+
+                setScheduleData(prev => [...prev, newProgram]);
                 setIsModalOpen(false);
                 Swal.fire('Success', 'Program added successfully!', 'success');
             } catch (err) {
@@ -416,17 +421,19 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         }
     };
 
+
     const handleCheckboxChange = (item) => {
         setSelectedCeremonies(prevSelected => {
-            const exists = prevSelected.find((c) => c._id === item._id);
+            // Ensure prevSelected is an array before calling .find()
+            const currentSelected = Array.isArray(prevSelected) ? prevSelected : [];
+            const exists = currentSelected.find((c) => c._id === item._id);
             if (exists) {
-                return prevSelected.filter((c) => c._id !== item._id);
+                return currentSelected.filter((c) => c._id !== item._id);
             } else {
-                return [...prevSelected, item];
+                return [...currentSelected, item];
             }
         });
     };
-
 
     const today = new Date();
 
@@ -435,27 +442,35 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         format: 'D MMMM, YYYYb',
         calculationMethod: 'BD',
     });
+    const banglaDate = banglaDateObj;
 
-    // Convert the final output to Bangla if needed (optional)
-    const banglaDate = banglaDateObj; // already Bangla formatted
-
-    // English date in Bangla numerals
     const toBanglaNumber = (input) =>
         input.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
 
     const engDate = `${toBanglaNumber(today.getDate())}/${toBanglaNumber(today.getMonth() + 1)}/${toBanglaNumber(today.getFullYear())}`;
 
-    // Optional: Bangla day name
     const dayNames = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
-    const dayName = dayNames[today.getDay()];
-    const dayShift = urlShiftKey === 'সকাল' ? 'প্রথম অধিবেশন' : 'দ্বিতীয় অধিবেশন'
+    // Display day name based on whether it's a special schedule or a regular day
+    const displayDayName = isSpecialSchedule ? 'বিশেষ অনুষ্ঠান' : (urlDayKey || dayNames[today.getDay()]);
+    // Display shift based on whether it's a special schedule or a regular shift
+    const displayShift = isSpecialSchedule ? '' : (urlShiftKey === 'সকাল' ? 'প্রথম অধিবেশন' : (urlShiftKey === 'বিকাল' ? 'দ্বিতীয় অধিবেশন' : ''));
+
 
     const handleShowReport = (item) => {
         navigate('/report', { state: { ceremony: item } });
     };
 
     const handleSubmit = () => {
-        navigate('/print', { state: { selectedRows: selectedCeremonies, dayName: urlDayKey, engDate: engDate, dayShift: dayShift } });
+        // Pass relevant data for print view, including whether it's special
+        navigate('/print', {
+            state: {
+                selectedRows: selectedCeremonies,
+                dayName: displayDayName, // Use the dynamically determined display name
+                engDate: engDate,
+                dayShift: displayShift, // Use the dynamically determined display shift
+                isSpecial: isSpecialSchedule // Pass this flag to PrintView if needed
+            }
+        });
     };
 
     const handlePrint = () => {
@@ -465,22 +480,15 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     if (adminLoading) return <Loading />
 
     return (
-        <div className="bg-white p-2 sm:p-3 w-full font-kalpurush print:font-kalpurush relative  overflow-x-auto print:overflow-visible print:w-auto print:mx-auto print:max-w-none">
-            {/* <div className='absolute top-0 mb-20 right-[60%]'>
-                <img className='w-20 h-20' src="/logo.png" alt="logo" />
-            </div> */}
+        <div className="bg-white p-2 sm:p-3 w-full font-kalpurush print:font-kalpurush relative overflow-x-auto print:overflow-visible print:w-auto print:mx-auto print:max-w-none">
             <header className="mb-6 w-full">
                 <div className="flex flex-col relative md:flex-row justify-between items-center mt-3 text-center md:text-right overflow-x-auto print:overflow-visible">
-                    {/* Empty div for spacing on left */}
                     <div className="flex-1 hidden md:block"></div>
                     <div className=' border px-4 py-1'>
                         <h2>কিউশীট ও সিডি চার্ট</h2>
                     </div>
                     <div className="flex flex-col items-center justify-center text-sm mb-4 md:mb-0 relative w-full md:w-auto">
-                        {/* Logo */}
                         <img className="w-20 h-20 mb-2" src="/logo.png" alt="logo" />
-
-                        {/* Text Below Logo */}
                         <div className="text-center leading-5">
                             <p>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
                             <p>বাংলাদেশ বেতার, বরিশাল।</p>
@@ -488,17 +496,16 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                             <p>ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
                         </div>
                     </div>
-                    <div className='border print:mr-4 px-4 py-1'>
-                        <h2>{dayShift}</h2>
+                    <div className="flex-1 hidden md:block">
+
                     </div>
 
-                    {/* Dynamic Date/Time/Shift Info on the right */}
                     <div className="flex-1 text-center md:text-right text-sm mt-4 md:mt-0">
-                        <p contentEditable suppressContentEditableWarning className="whitespace-nowrap ">{urlDayKey}</p>
+                        <p contentEditable suppressContentEditableWarning className="whitespace-nowrap ">{displayDayName}</p> {/* Use displayDayName here */}
                         <p contentEditable suppressContentEditableWarning className=" whitespace-nowrap">{banglaDate} </p>
                         <p contentEditable suppressContentEditableWarning className="whitespace-nowrap">{engDate} খ্রিষ্টাব্দ</p>
                     </div>
-                </div>
+                </div >
             </header >
 
             {/* Officer/Supervisor/Announcer Table */}
@@ -531,9 +538,6 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     </thead>
                 </table>
             </div>
-
-
-
 
             {/* Main Program Table */}
             < div className="print:w-full print:min-w-full print:max-w-none w-full overflow-x-auto" >
@@ -614,7 +618,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                         <Droppable droppableId="schedule">
                             {(provided) => (
                                 <tbody ref={provided.innerRef} {...provided.droppableProps} className="bg-white divide-y divide-gray-200">
-                                    {displayedScheduleData.map((item, index) => ( // এখানে displayedScheduleData ব্যবহার করা হয়েছে
+                                    {displayedScheduleData.map((item, index) => (
                                         <Draggable key={item._id || `program-${index}`} draggableId={item._id || `program-${index}`} index={index}>
                                             {(provided) => (
                                                 <tr
@@ -629,7 +633,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                         {item.serial || ' '}
                                                     </td>
                                                     <td className="py-1 w-[45px] min-w-[45px] max-w-[45px] px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
-                                                        {item.period || ' '} {/* Displaying Period here */}
+                                                        {item.period || ' '}
                                                     </td>
                                                     <td className="py-1 w-[70px] min-w-[70px] max-w-[70px] px-2 border border-gray-700 text-center whitespace-nowrap text-xs sm:text-sm text-gray-700">
                                                         {item.broadcastTime || ' '}
@@ -757,8 +761,8 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 initialData={modalInitialData}
                 onSave={handleSaveModalData}
                 title={currentEditIndex !== null ? 'Edit Entry' : 'Add New Entry'}
-                // Pass the program type of the item being edited for correct modal behavior
                 currentProgramType={currentEditIndex !== null ? scheduleData[currentEditIndex].programType : 'General'}
+                isSpecialSchedule={isSpecialSchedule} // Pass this prop to EntryModal
             />
 
             <footer className="flex flex-col sm:flex-row items-center justify-between my-10  text-xs sm:text-sm text-center sm:text-left space-y-4 sm:space-y-0">
@@ -778,7 +782,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             </footer>
             <div className='flex justify-between text-sm mb-10'>
                 <div>পরীক্ষিত</div>
-                <div>লগবইয়ে অন্তর্ভূক্ত</div>
+                <div>লগবইয়ে অন্তর্ভূক্ত</div>
                 <div>ভারপ্রাপ্ত কর্মকর্তা</div>
                 <div>উপ-আঞ্চলিক পরিচালক</div>
                 <div>আঞ্চলিক পরিচালক</div>
@@ -792,4 +796,4 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     );
 };
 
-export default TableView;
+export default NewTable;

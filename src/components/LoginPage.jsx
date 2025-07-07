@@ -101,7 +101,7 @@ const LoginPage = () => {
                         <img src="/logo.png" alt="Bangladesh Betar Logo" className="h-32 w-32 rounded-full object-contain" />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-extrabold mb-2 leading-tight">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</h2>
-                    <h3 className="text-xl sm:text-2xl font-semibold mt-1">বাংলাদেশ বেতার</h3>
+                    <h3 className="text-xl sm:text-2xl font-semibold mt-1">বাংলাদেশ বেতার, বরিশাল</h3>
                     <p className="mt-4 text-base opacity-90">আপনার দৈনিক কর্মসূচী সহজে পরিচালনা করুন।</p>
                 </div>
 

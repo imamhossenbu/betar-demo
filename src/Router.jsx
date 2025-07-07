@@ -16,6 +16,10 @@ import Loading from './components/Loading';
 import AllSongs from './pages/AllSongs';
 import AllUsers from './pages/AllUsers';
 import AdminRoute from './hooks/AdminRoute';
+import NewTable from './components/NewTable';
+import AllSpecialSong from './pages/AllSpecialSong';
+import AddSpecialSong from './pages/AddSpecialSong';
+
 
 const AppRouter = () => {
     const { user, loading } = useContext(AuthContext); // ✅ use context logout
@@ -63,6 +67,16 @@ const AppRouter = () => {
                     ),
                 },
                 {
+                    path: 'schedule/special',
+                    element: <NewTable
+                        scheduleData={scheduleData}
+                        setScheduleData={setScheduleData}
+                        selectedCeremonies={selectedCeremonies}
+                        setSelectedCeremonies={setSelectedCeremonies}
+                        scheduleType={'special'}
+                    />
+                },
+                {
                     path: 'print',
                     element: <PrintView selectedCeremonies={selectedCeremonies} />,
                 },
@@ -75,12 +89,20 @@ const AppRouter = () => {
                     element: <AdminRoute><AddSongPage /></AdminRoute>,
                 },
                 {
+                    path: 'add-special-song',
+                    element: <AddSpecialSong />
+                },
+                {
                     path: 'all-songs',
                     element: <AllSongs />
                 },
                 {
+                    path: 'all-special-song',
+                    element: <AllSpecialSong />
+                },
+                {
                     path: 'all-users',
-                    element: <AllUsers />
+                    element: <AdminRoute><AllUsers /></AdminRoute>
                 }
                 ,
                 {

@@ -86,7 +86,7 @@ const SignupPage = () => {
                         <img src="logo.png" alt="Logo" className="h-32 w-32 rounded-full object-contain" />
                     </div>
                     <h2 className="text-2xl sm:text-4xl font-extrabold mb-2 leading-tight">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</h2>
-                    <h3 className="text-xl sm:text-2xl font-semibold mt-1">বাংলাদেশ বেতার</h3>
+                    <h3 className="text-xl sm:text-2xl font-semibold mt-1">বাংলাদেশ বেতার, বরিশাল</h3>
                     <p className="mt-4 text-base opacity-90">সহজে আপনার নতুন অ্যাকাউন্ট তৈরি করুন।</p>
                 </div>
 

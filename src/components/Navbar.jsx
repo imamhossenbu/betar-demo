@@ -86,6 +86,40 @@ const Navbar = ({ setScheduleData }) => {
         }
     };
 
+    const handleLoadSpecial = async () => {
+        closeMobileMenu();
+        if (!user) {
+            console.log('Navbar - No user when trying to load programs, navigating to login.'); // Add this
+            Swal.fire('Error', 'Please log in to view programs.', 'error');
+            navigate('/login');
+            return;
+        }
+
+
+        try {
+
+
+            const programsResponse = await axiosPublic.get(
+                `/api/special?source=entryModal`
+            );
+            setScheduleData(programsResponse.data);
+            console.log(programsResponse.data);
+
+            Swal.fire('Info', `Loading programs for special.`, 'info');
+
+            navigate(`/schedule/special`);
+        } catch (error) {
+            console.error("Error loading programs:", error.response?.data || error.message);
+            if (error.response && error.response.status === 404) {
+                setScheduleData([]);
+                Swal.fire('Info', `No programs found for special. You can add new ones.`, 'info');
+                navigate(`/schedule/special`);
+            } else {
+                Swal.fire('Error', `Failed to load programs: ${error.response?.data?.message || error.message}`, 'error');
+            }
+        }
+    }
+
 
     const handleLogout = async () => {
         try {
@@ -106,11 +140,22 @@ const Navbar = ({ setScheduleData }) => {
     return (
         <nav className="bg-blue-100 py-4 px-6 shadow mb-6 flex items-center justify-between font-kalpurush relative print:hidden">
             <div className="flex items-center flex-shrink-0">
-                <NavLink to="/" className="text-blue-800 font-bold text-2xl whitespace-nowrap flex items-center" onClick={closeMobileMenu}>
-                    <img src="/logo.png" alt="Betar Logo" className="h-10 w-10 mr-2 inline-block rounded-md" />
-                    ই-কিউশীট
+                <NavLink
+                    to="/"
+                    onClick={closeMobileMenu}
+                    className="flex items-center space-x-2 text-blue-800 font-bold text-2xl whitespace-nowrap"
+                >
+                    <div>
+                        <img
+                            src="/logo.png"
+                            alt="Betar Logo"
+                            className="h-10 w-10 rounded-md"
+                        />
+                    </div>
+                    <div>ই-কিউশীট</div>
                 </NavLink>
             </div>
+
 
             <div className="md:hidden">
                 <button onClick={toggleMobileMenu} className="text-blue-800 focus:outline-none" aria-label="Toggle navigation" aria-expanded={mobileMenuOpen}>
@@ -155,7 +200,7 @@ const Navbar = ({ setScheduleData }) => {
                             )}
                         </div>
                     ))}
-                    <button className="text-blue-800 font-semibold hover:bg-blue-200 px-3 py-1.5 rounded-md focus:outline-none text-sm md:text-base  text-left md:text-center">বিশেষ</button>
+                    <button className="text-blue-800 font-semibold hover:bg-blue-200 px-3 py-1.5 rounded-md focus:outline-none text-sm md:text-base  text-left md:text-center" onClick={handleLoadSpecial}>বিশেষ</button>
                 </div>
 
                 <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 sm:gap-4 md:justify-end md:flex-grow-0">

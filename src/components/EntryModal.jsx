@@ -2,9 +2,19 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { MdOutlineClose } from 'react-icons/md';
 
-const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgramType }) => {
+const EntryModal = ({
+    isOpen,
+    onClose,
+    initialData,
+    onSave,
+    title,
+    currentProgramType,
+    isSpecialSchedule,
+}) => {
     const [formData, setFormData] = useState(initialData);
-    const [programType, setProgramType] = useState(initialData.programType || currentProgramType || 'General');
+    const [programType, setProgramType] = useState(
+        initialData.programType || currentProgramType || 'General'
+    );
 
     useEffect(() => {
         setFormData(initialData);
@@ -24,17 +34,22 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
         setFormData((prev) => {
             const cleared = { ...prev, programType: newType };
             if (newType === 'Song') {
+                // Clear general program fields when switching to Song
                 cleared.serial = '';
                 cleared.broadcastTime = '';
-                cleared.period = '';
+                cleared.period = ''; // Period is cleared for songs
                 cleared.day = '';
                 cleared.shift = '';
+                cleared.programDetails = '';
             } else {
+                // Clear song-specific fields when switching to General
                 cleared.artist = '';
                 cleared.lyricist = '';
                 cleared.composer = '';
                 cleared.cdCut = '';
                 cleared.duration = '';
+                // For General type, period, day, shift, programDetails are retained
+                // as they are relevant for general programs.
             }
             return cleared;
         });
@@ -46,18 +61,20 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
         let missingFields = [];
 
         if (!formData.programType) missingFields.push('Program Type');
+        // Removed orderIndex validation as it's no longer managed by the modal form.
+        // if (formData.orderIndex === undefined || formData.orderIndex === null)
+        //     missingFields.push('Order Index');
 
-        // For General type: validate required fields
-        if (programType !== 'Song') {
-            if (!formData.day) missingFields.push('Day');
-            if (!formData.shift) missingFields.push('Shift');
+        if (programType === 'Song') {
+            if (!formData.artist) missingFields.push('Artist');
+        } else {
+            // For General type programs
             if (!formData.programDetails) missingFields.push('Program Details');
             if (!formData.serial) missingFields.push('Serial');
             if (!formData.broadcastTime) missingFields.push('Broadcast Time');
-            if (!formData.period) missingFields.push('Period');
-        } else {
-            // For Song type
-            if (!formData.artist) missingFields.push('Artist');
+
+            // Period is required for General programs ONLY if it's NOT a special schedule
+            if (!isSpecialSchedule && !formData.period) missingFields.push('Period');
         }
 
         if (missingFields.length > 0) {
@@ -69,44 +86,52 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
             return;
         }
 
-        // Clean data before submitting
         const cleanedFormData = {
             ...formData,
-            programType
+            programType,
         };
 
-        // Clear unnecessary fields for 'Song'
+        // Ensure unnecessary fields are cleared for 'Song'
         if (programType === 'Song') {
             cleanedFormData.serial = '';
             cleanedFormData.broadcastTime = '';
             cleanedFormData.day = '';
             cleanedFormData.shift = '';
-            cleanedFormData.period = '';
+            cleanedFormData.period = ''; // Explicitly clear period for Song type
+            cleanedFormData.programDetails = '';
+        } else {
+            // For General type special programs, ensure day and shift are explicitly empty
+            // Period is NOT cleared here for General type, it retains its value from formData.
+            if (isSpecialSchedule) {
+                cleanedFormData.day = '';
+                cleanedFormData.shift = '';
+            }
         }
 
-        onSave(cleanedFormData); // Pass cleaned data to parent (TableView)
+        onSave(cleanedFormData);
     };
-
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4 sm:p-6">
             <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-2xl font-kalpurush overflow-y-auto max-h-[90vh] relative">
-                <button onClick={onClose} className="absolute top-3 right-3 text-gray-600 hover:text-black text-2xl">
+                <button
+                    onClick={onClose}
+                    className="absolute top-3 right-3 text-gray-600 hover:text-black text-2xl"
+                >
                     <MdOutlineClose />
                 </button>
                 <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
                 <form onSubmit={handleSubmit}>
-
                     <div className="mb-4">
-                        <label className="block text-sm font-bold mb-1">অনুষ্ঠান ধরণ (Program Type):</label>
+                        <label className="block text-sm font-bold mb-1">অনুষ্ঠান ধরণ:</label>
                         <select
                             name="programType"
                             value={programType}
                             onChange={handleProgramTypeChange}
                             className="border rounded px-3 py-2 w-full"
                         >
-                            <option value="General">General</option>
-                            <option value="Song">Song</option>
+                            <option value="General">General(সাধারণ)</option>
+                            <option value="Song">গান/অনুষ্ঠান</option>
                         </select>
                     </div>
 
@@ -131,7 +156,7 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
                                     onChange={handleChange}
                                     placeholder="Serial"
                                     className="border rounded px-3 py-2"
-                                    required
+                                    required // Serial is always required for General programs
                                 />
                                 <input
                                     type="text"
@@ -140,7 +165,7 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
                                     onChange={handleChange}
                                     placeholder="Broadcast Time"
                                     className="border rounded px-3 py-2"
-                                    required
+                                    required // Broadcast Time is always required for General programs
                                 />
                             </div>
                             <input
@@ -150,7 +175,7 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
                                 onChange={handleChange}
                                 placeholder="Period"
                                 className="border rounded px-3 py-2 w-full mb-4"
-                                required
+                                required={isSpecialSchedule} // Period is required only if NOT a special schedule
                             />
                         </>
                     )}
@@ -204,6 +229,7 @@ const EntryModal = ({ isOpen, onClose, initialData, onSave, title, currentProgra
                             />
                         </>
                     )}
+
 
                     <div className="flex justify-end space-x-3">
                         <button
