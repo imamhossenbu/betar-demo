@@ -44,7 +44,7 @@ const AddSpecialSong = ({ onSongAdded }) => {
             day: '',
             shift: '',
             period: '',
-            orderIndex: '', // This will be set by the backend based on current max or re-indexed
+            orderIndex: 0, // This will be set by the backend based on current max or re-indexed
             source: '', // <--- IMPORTANT: Added this line to tag the source
         };
 

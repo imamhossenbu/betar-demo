@@ -18,7 +18,7 @@ const Layout = ({ setScheduleData }) => {
                 <Outlet />
             </main>
 
-            <footer className="bg-gray-100 text-center text-sm text-gray-600 py-4 border-t border-gray-200 font-kalpurush">
+            <footer className="bg-gray-100 print:hidden text-center text-sm text-gray-600 py-4 border-t border-gray-200 font-kalpurush">
                 © {currentYear} বাংলাদেশ বেতার | সর্বস্বত্ব সংরক্ষিত
             </footer>
 

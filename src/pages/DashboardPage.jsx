@@ -39,7 +39,7 @@ const DashboardPage = () => {
                     <h3 className="text-xl font-semibold mb-2">সকল গান/অনুষ্ঠান</h3>
                     <p className="text-gray-600 mb-4">আপনার সমস্ত সংরক্ষিত গান/অনুষ্ঠান দেখুন এবং পরিচালনা করুন।</p>
                     <button
-                        onClick={() => navigate('/all-special-song')}
+                        onClick={() => navigate('/all-songs')}
                         className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
                     >
                         গান/অনুষ্ঠান সমূহ দেখুন

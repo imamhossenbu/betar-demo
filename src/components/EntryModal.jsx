@@ -11,14 +11,14 @@ const EntryModal = ({
     currentProgramType,
     isSpecialSchedule,
 }) => {
-    const [formData, setFormData] = useState(initialData);
+    const [formData, setFormData] = useState(initialData || {});
     const [programType, setProgramType] = useState(
-        initialData.programType || currentProgramType || 'General'
+        initialData?.programType || currentProgramType || 'General'
     );
 
     useEffect(() => {
-        setFormData(initialData);
-        setProgramType(initialData.programType || currentProgramType || 'General');
+        setFormData(initialData || {});
+        setProgramType(initialData?.programType || currentProgramType || 'General');
     }, [initialData, currentProgramType]);
 
     if (!isOpen) return null;
@@ -34,22 +34,19 @@ const EntryModal = ({
         setFormData((prev) => {
             const cleared = { ...prev, programType: newType };
             if (newType === 'Song') {
-                // Clear general program fields when switching to Song
+                // Clear fields not needed for songs
                 cleared.serial = '';
                 cleared.broadcastTime = '';
-                cleared.period = ''; // Period is cleared for songs
+                cleared.period = '';
                 cleared.day = '';
                 cleared.shift = '';
-                cleared.programDetails = '';
             } else {
-                // Clear song-specific fields when switching to General
+                // Clear song-specific fields
                 cleared.artist = '';
                 cleared.lyricist = '';
                 cleared.composer = '';
                 cleared.cdCut = '';
                 cleared.duration = '';
-                // For General type, period, day, shift, programDetails are retained
-                // as they are relevant for general programs.
             }
             return cleared;
         });
@@ -61,19 +58,13 @@ const EntryModal = ({
         let missingFields = [];
 
         if (!formData.programType) missingFields.push('Program Type');
-        // Removed orderIndex validation as it's no longer managed by the modal form.
-        // if (formData.orderIndex === undefined || formData.orderIndex === null)
-        //     missingFields.push('Order Index');
+        if (!formData.programDetails) missingFields.push('Program Details');
 
         if (programType === 'Song') {
             if (!formData.artist) missingFields.push('Artist');
         } else {
-            // For General type programs
-            if (!formData.programDetails) missingFields.push('Program Details');
             if (!formData.serial) missingFields.push('Serial');
             if (!formData.broadcastTime) missingFields.push('Broadcast Time');
-
-            // Period is required for General programs ONLY if it's NOT a special schedule
             if (!isSpecialSchedule && !formData.period) missingFields.push('Period');
         }
 
@@ -91,17 +82,14 @@ const EntryModal = ({
             programType,
         };
 
-        // Ensure unnecessary fields are cleared for 'Song'
         if (programType === 'Song') {
             cleanedFormData.serial = '';
             cleanedFormData.broadcastTime = '';
+            cleanedFormData.period = '';
             cleanedFormData.day = '';
             cleanedFormData.shift = '';
-            cleanedFormData.period = ''; // Explicitly clear period for Song type
-            cleanedFormData.programDetails = '';
+            // ✅ keep programDetails for Song
         } else {
-            // For General type special programs, ensure day and shift are explicitly empty
-            // Period is NOT cleared here for General type, it retains its value from formData.
             if (isSpecialSchedule) {
                 cleanedFormData.day = '';
                 cleanedFormData.shift = '';
@@ -120,8 +108,11 @@ const EntryModal = ({
                 >
                     <MdOutlineClose />
                 </button>
+
                 <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
+
                 <form onSubmit={handleSubmit}>
+                    {/* Program Type */}
                     <div className="mb-4">
                         <label className="block text-sm font-bold mb-1">অনুষ্ঠান ধরণ:</label>
                         <select
@@ -130,11 +121,12 @@ const EntryModal = ({
                             onChange={handleProgramTypeChange}
                             className="border rounded px-3 py-2 w-full"
                         >
-                            <option value="General">General(সাধারণ)</option>
+                            <option value="General">General (সাধারণ)</option>
                             <option value="Song">গান/অনুষ্ঠান</option>
                         </select>
                     </div>
 
+                    {/* Program Details */}
                     <div className="mb-4">
                         <label className="block text-sm font-bold mb-1">অনুষ্ঠান বিবরণী:</label>
                         <textarea
@@ -142,10 +134,11 @@ const EntryModal = ({
                             value={formData.programDetails || ''}
                             onChange={handleChange}
                             className="border rounded w-full px-3 py-2"
-                            required={programType !== 'Song'}
+                            required
                         />
                     </div>
 
+                    {/* General Fields */}
                     {programType !== 'Song' && (
                         <>
                             <div className="grid grid-cols-2 gap-4 mb-4">
@@ -156,7 +149,7 @@ const EntryModal = ({
                                     onChange={handleChange}
                                     placeholder="Serial"
                                     className="border rounded px-3 py-2"
-                                    required // Serial is always required for General programs
+                                    required
                                 />
                                 <input
                                     type="text"
@@ -165,9 +158,10 @@ const EntryModal = ({
                                     onChange={handleChange}
                                     placeholder="Broadcast Time"
                                     className="border rounded px-3 py-2"
-                                    required // Broadcast Time is always required for General programs
+                                    required
                                 />
                             </div>
+
                             <input
                                 type="text"
                                 name="period"
@@ -175,11 +169,13 @@ const EntryModal = ({
                                 onChange={handleChange}
                                 placeholder="Period"
                                 className="border rounded px-3 py-2 w-full mb-4"
-                                required={isSpecialSchedule} // Period is required only if NOT a special schedule
+                                required
                             />
+
                         </>
                     )}
 
+                    {/* Song Fields */}
                     {programType === 'Song' && (
                         <>
                             <div className="grid grid-cols-2 gap-4 mb-4">
@@ -230,7 +226,7 @@ const EntryModal = ({
                         </>
                     )}
 
-
+                    {/* Buttons */}
                     <div className="flex justify-end space-x-3">
                         <button
                             type="button"
