@@ -9,6 +9,7 @@ import useAxiosSecure from '../useAxiosSecure';
 import { getDate } from 'bangla-calendar';
 import useAdmin from '../hooks/useAdmin';
 import Loading from './Loading';
+import useAxiosPublic from '../useAxiosPublic';
 
 
 // NewTable component now accepts a 'scheduleType' prop
@@ -19,6 +20,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
     const [isAdmin, adminLoading] = useAdmin();
 
     const axiosSecure = useAxiosSecure();
+    const axiosPublic = useAxiosPublic();
 
     const [loadingCdCutIndex, setLoadingCdCutIndex] = useState(null);
     const debounceTimeoutRefs = useRef({});

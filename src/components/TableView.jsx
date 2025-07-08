@@ -12,6 +12,7 @@ import {
 } from 'bangla-calendar';
 import useAdmin from '../hooks/useAdmin';
 import Loading from './Loading';
+import useAxiosPublic from '../useAxiosPublic';
 
 
 const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies }) => {
@@ -21,6 +22,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     const [isAdmin, adminLoading] = useAdmin();
 
     const axiosSecure = useAxiosSecure();
+    const axiosPublic = useAxiosPublic();
 
 
     // প্রতি রো-এর জন্য CD Cut অনুসন্ধানের লোডিং অবস্থা ট্র্যাক করার জন্য নতুন স্টেট
@@ -242,6 +244,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
     const handleDelete = (indexToDelete) => {
         const itemToDelete = displayedScheduleData[indexToDelete]; // Use displayed data for deletion
+
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -253,59 +256,71 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axiosSecure.delete(`/api/programs/${itemToDelete._id}`);
-                    const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete); // Filter original scheduleData
+                    // Attempt deletion from backend
+                    const deleteRes = await axiosSecure.delete(`/api/programs/${itemToDelete._id}`);
+                    if (deleteRes.status === 200 || deleteRes.status === 204) {
+                        // Update frontend state
+                        const updatedSchedule = scheduleData.filter((_, idx) => idx !== indexToDelete);
 
-                    let serialCounter = 1;
-                    const reIndexedSchedule = updatedSchedule.map((item, newIndex) => { // newIndex here is important for recalculating orderIndex
-                        // If item had a serial, re-index it.
-                        if (item.serial && item.serial.trim() !== '') {
-                            return {
-                                ...item,
-                                serial: convertToBengaliNumber(serialCounter++),
-                                orderIndex: newIndex,// Also update orderIndex for remaining items
-                                type: scheduleType,
-                            };
-                        }
-                        return { ...item, orderIndex: newIndex }; // Keep serial empty if it was empty, but update orderIndex
-                    });
-                    setScheduleData(reIndexedSchedule); // This will trigger the useEffect for displayedScheduleData
+                        let serialCounter = 1;
+                        const reIndexedSchedule = updatedSchedule.map((item, newIndex) => {
+                            if (item.serial && item.serial.trim() !== '') {
+                                return {
+                                    ...item,
+                                    serial: convertToBengaliNumber(serialCounter++),
+                                    orderIndex: newIndex,
+                                    type: scheduleType,
+                                };
+                            }
+                            return { ...item, orderIndex: newIndex };
+                        });
 
-                    const updatedSelectedCeremonies = selectedCeremonies.filter(
-                        (item) => item._id !== itemToDelete._id
-                    );
-                    setSelectedCeremonies(updatedSelectedCeremonies);
+                        setScheduleData(reIndexedSchedule);
 
-                    Swal.fire('Deleted!', 'The entry has been deleted.', 'success');
+                        // Update selectedCeremonies
+                        const updatedSelectedCeremonies = selectedCeremonies.filter(
+                            (item) => item._id !== itemToDelete._id
+                        );
+                        setSelectedCeremonies(updatedSelectedCeremonies);
 
-                    // After deletion, we should also send a bulk update for orderIndex to backend
-                    // to ensure persistent reordering.
-                    const updatesForBackendAfterDelete = reIndexedSchedule.map(item => ({
-                        _id: item._id,
-                        serial: (item.serial && item.serial.trim() !== '') ? convertToEnglishNumber(item.serial) : '', // Ensure serial is English for backend
-                        orderIndex: item.orderIndex
-                    }));
+                        Swal.fire('Deleted!', 'The entry has been deleted.', 'success');
 
-                    if (updatesForBackendAfterDelete.length > 0) {
+                        // Prepare orderIndex updates for backend
+                        const updatesForBackendAfterDelete = reIndexedSchedule.map(item => ({
+                            _id: item._id,
+                            serial: item.serial && item.serial.trim() !== ''
+                                ? convertToEnglishNumber(item.serial)
+                                : '',
+                            orderIndex: item.orderIndex
+                        }));
+
+                        // Separate backend update in its own try-catch
                         try {
-                            const updatePromises = updatesForBackendAfterDelete.map(update => {
-                                const { _id, ...fieldsToUpdate } = update;
-                                return axiosSecure.put(`/api/programs/${_id}`, fieldsToUpdate);
-                            });
-                            await Promise.all(updatePromises);
-                            // console.log("Backend orderIndexes updated after deletion.");
-                        } catch (updateError) {
-                            console.error("Failed to update backend orderIndexes after deletion:", updateError);
-                            // Handle this silent failure if necessary
-                        }
-                    }
+                            const updatePromises = updatesForBackendAfterDelete
+                                .filter(update => update._id) // Ensure _id exists
+                                .map(update => {
+                                    const { _id, ...fieldsToUpdate } = update;
+                                    return axiosSecure.put(`/api/programs/${_id}`, fieldsToUpdate);
+                                });
 
+                            if (updatePromises.length > 0) {
+                                await Promise.all(updatePromises);
+                                // console.log("Backend orderIndexes updated.");
+                            }
+                        } catch (updateError) {
+                            console.error("Order index update failed (but deletion succeeded):", updateError);
+                        }
+                    } else {
+                        throw new Error(`Unexpected delete status: ${deleteRes.status}`);
+                    }
                 } catch (error) {
-                    Swal.fire('Error!', 'Failed to delete entry.', 'error');
+                    console.error("Deletion error:", error);
+                    Swal.fire('Error!', `Failed to delete entry: ${error.message}`, 'error');
                 }
             }
         });
     };
+
 
     const handleEdit = (indexToEdit) => {
         setCurrentEditIndex(indexToEdit);

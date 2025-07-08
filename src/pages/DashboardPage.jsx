@@ -20,7 +20,7 @@ const DashboardPage = () => {
 
                 {/* Add New Song/Program (Admin only) */}
                 {isAdmin && (
-                    <div className="bg-green-50 p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
+                    <div className="bg-green-50 p-6 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300 flex flex-col items-center justify-center text-center">
                         <span className="text-5xl mb-4" role="img" aria-label="Music Note">🎵</span>
                         <h3 className="text-xl font-semibold mb-2">নতুন গান/অনুষ্ঠান যোগ করুন</h3>
                         <p className="text-gray-600 mb-4">আপনার সংগ্রহে নতুন গান/অনুষ্ঠান যোগ করুন।</p>
@@ -34,7 +34,7 @@ const DashboardPage = () => {
                 )}
 
                 {/* All Songs/Programs */}
-                <div className="bg-yellow-50 p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
+                <div className="bg-yellow-50 p-6 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300 flex flex-col items-center justify-center text-center">
                     <span className="text-5xl mb-4" role="img" aria-label="Songs">📂</span>
                     <h3 className="text-xl font-semibold mb-2">সকল গান/অনুষ্ঠান</h3>
                     <p className="text-gray-600 mb-4">আপনার সমস্ত সংরক্ষিত গান/অনুষ্ঠান দেখুন এবং পরিচালনা করুন।</p>
@@ -48,7 +48,7 @@ const DashboardPage = () => {
 
                 {/* Add Special Program (Admin only) */}
                 {isAdmin && (
-                    <div className="bg-purple-50 p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
+                    <div className="bg-purple-50 p-6 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300 flex flex-col items-center justify-center text-center">
                         <span className="text-5xl mb-4" role="img" aria-label="Add Special">🌟</span>
                         <h3 className="text-xl font-semibold mb-2">বিশেষ গান/অনুষ্ঠান যোগ করুন</h3>
                         <p className="text-gray-600 mb-4">বিশেষ দিনের জন্য গান বা অনুষ্ঠান যোগ করুন।</p>
@@ -61,8 +61,8 @@ const DashboardPage = () => {
                     </div>
                 )}
 
-                {/* View Special Songs/Programs (Visible to all) */}
-                <div className="bg-blue-50 p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
+                {/* View Special Songs/Programs */}
+                <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300 flex flex-col items-center justify-center text-center">
                     <span className="text-5xl mb-4" role="img" aria-label="Special">📻</span>
                     <h3 className="text-xl font-semibold mb-2">বিশেষ গান/অনুষ্ঠান</h3>
                     <p className="text-gray-600 mb-4">বিশেষ অনুষ্ঠানের তালিকা দেখুন।</p>
@@ -76,8 +76,8 @@ const DashboardPage = () => {
 
                 {/* All Users (Admin only) */}
                 {isAdmin && (
-                    <div className="bg-red-50 p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
-                        <span className="text-5xl mb-4">👥</span>
+                    <div className="bg-red-50 p-6 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform duration-300 flex flex-col items-center justify-center text-center">
+                        <span className="text-5xl mb-4" role="img" aria-label="Users">👥</span>
                         <h3 className="text-xl font-semibold mb-2">সকল ইউজার</h3>
                         <p className="text-gray-600 mb-4">সিস্টেমে রেজিস্টারকৃত সকল ইউজার দেখুন।</p>
                         <button
@@ -88,7 +88,6 @@ const DashboardPage = () => {
                         </button>
                     </div>
                 )}
-
             </div>
 
             <div className="mt-12 text-center">
