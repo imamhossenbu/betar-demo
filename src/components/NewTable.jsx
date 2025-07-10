@@ -487,7 +487,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
                 <div className="flex flex-col relative md:flex-row justify-between items-center mt-3 text-center md:text-right overflow-x-auto print:overflow-visible">
                     <div className="flex-1 hidden md:block"></div>
                     <div className=' border px-4 py-1'>
-                        <h2>কিউশীট ও সিডি চার্ট</h2>
+                        <h2>কিউশীট </h2>
                     </div>
                     <div className="flex flex-col items-center justify-center text-sm mb-4 md:mb-0 relative w-full md:w-auto">
                         <img className="w-20 h-20 mb-2" src="/logo.png" alt="logo" />
@@ -586,7 +586,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
                                 scope="col"
                                 className="py-1 px-2 w-[70px] min-w-[70px] max-w-[70px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
-                                সিডি/কাট
+                                আইডি
                             </th>
                             <th
                                 scope="col"
@@ -682,7 +682,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
                                                                     value={item.cdCut || ''}
                                                                     onChange={(e) => handleInlineCdCutChange(e, index)}
                                                                     className="w-full h-full focus:ring-blue-500 focus:border-blue-500 text-sm py-1 px-2"
-                                                                    placeholder="CD Cut"
+                                                                    placeholder="আইডি"
                                                                 />
                                                                 {loadingCdCutIndex === index && (
                                                                     <span className="text-blue-500 text-xs">...</span>
@@ -751,7 +751,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
                         onClick={handleSubmit}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
                     >
-                        Submit
+                        অনুষ্ঠান সূচি
                     </button>
                 </div>
             )}

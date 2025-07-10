@@ -35,9 +35,9 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     const navigate = useNavigate();
     const location = useLocation();
     const { shift: urlShiftKey, dayKey: urlDayKey } = useParams();
+    console.log(urlDayKey, 'day');
 
     const queryParams = new URLSearchParams(location.search);
-    // const dayName = urlDayKey ? decodeURIComponent(urlDayKey) : 'দিন';
 
 
 
@@ -269,7 +269,6 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                     ...item,
                                     serial: convertToBengaliNumber(serialCounter++),
                                     orderIndex: newIndex,
-                                    type: scheduleType,
                                 };
                             }
                             return { ...item, orderIndex: newIndex };
@@ -338,6 +337,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
     const handleAddNewClick = () => {
         setCurrentEditIndex(null);
+        console.log(urlDayKey);
 
 
 
@@ -346,7 +346,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
             serial: '', // Default to empty string for new entries
             broadcastTime: '',
             programDetails: '',
-            day: dayName,
+            day: urlDayKey,
             shift: banglaShift,
             period: banglaShift, // Initialized with banglaShift
             programType: 'General', // Default program type
@@ -402,7 +402,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
         } else {
             // Add new program
             try {
-                payload.day = dayName;
+                payload.day = urlDayKey;
                 payload.shift = banglaShift;
                 payload.period = payload.period;
                 payload.orderIndex = scheduleData.length; // New item gets the last order index
@@ -460,9 +460,6 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
 
     const engDate = `${toBanglaNumber(today.getDate())}/${toBanglaNumber(today.getMonth() + 1)}/${toBanglaNumber(today.getFullYear())}`;
 
-    // Optional: Bangla day name
-    const dayNames = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
-    const dayName = dayNames[today.getDay()];
     const dayShift = urlShiftKey === 'সকাল' ? 'প্রথম অধিবেশন' : 'দ্বিতীয় অধিবেশন'
 
     const handleShowReport = (item) => {
@@ -489,7 +486,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                     {/* Empty div for spacing on left */}
                     <div className="flex-1 hidden md:block"></div>
                     <div className=' border px-4 py-1'>
-                        <h2>কিউশীট ও সিডি চার্ট</h2>
+                        <h2>কিউশীট</h2>
                     </div>
                     <div className="flex flex-col items-center justify-center text-sm mb-4 md:mb-0 relative w-full md:w-auto">
                         {/* Logo */}
@@ -595,7 +592,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                 scope="col"
                                 className="py-1 px-2 w-[70px] min-w-[70px] max-w-[70px] text-center text-xs sm:text-sm font-semibold uppercase border border-gray-700 tracking-wider whitespace-nowrap"
                             >
-                                সিডি/কাট
+                                আইডি
                             </th>
                             <th
                                 scope="col"
@@ -691,7 +688,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                                                                     value={item.cdCut || ''}
                                                                     onChange={(e) => handleInlineCdCutChange(e, index)}
                                                                     className="w-full h-full focus:ring-blue-500 focus:border-blue-500 text-sm py-1 px-2"
-                                                                    placeholder="CD Cut"
+                                                                    placeholder="আইডি"
                                                                 />
                                                                 {loadingCdCutIndex === index && (
                                                                     <span className="text-blue-500 text-xs">...</span>
@@ -760,7 +757,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                         onClick={handleSubmit}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 sm:px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
                     >
-                        Submit
+                        অনুষ্ঠান সূচি
                     </button>
                 </div>
             )}
