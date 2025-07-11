@@ -100,7 +100,7 @@ const EntryModal = ({
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4 sm:p-6">
+        <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-black to-blue-900 bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-50 p-4 sm:p-6">
             <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-2xl font-kalpurush overflow-y-auto max-h-[90vh] relative">
                 <button
                     onClick={onClose}
@@ -171,7 +171,6 @@ const EntryModal = ({
                                 className="border rounded px-3 py-2 w-full mb-4"
                                 required
                             />
-
                         </>
                     )}
 

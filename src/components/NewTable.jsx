@@ -494,7 +494,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
                         <div className="text-center leading-5">
                             <p>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
                             <p>বাংলাদেশ বেতার, বরিশাল।</p>
-                            <p><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">এপঃ</span> Bangladesh Betar</p>
+                            <p><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">অ্যাপঃ</span> Bangladesh Betar</p>
                             <p>ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
                         </div>
                     </div>
@@ -784,7 +784,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
             </footer>
             <div className='flex justify-between text-sm mb-10'>
                 <div>পরীক্ষিত</div>
-                <div>লগবইয়ে অন্তর্ভূক্ত</div>
+                <div>লগ বইয়ে অন্তর্ভূক্ত</div>
                 <div>ভারপ্রাপ্ত কর্মকর্তা</div>
                 <div>উপ-আঞ্চলিক পরিচালক</div>
                 <div>আঞ্চলিক পরিচালক</div>
