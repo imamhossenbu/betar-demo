@@ -9,6 +9,7 @@ import useAxiosPublic from '../useAxiosPublic';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
     const [showReset, setShowReset] = useState(false);
     const axiosPublic = useAxiosPublic();
     const navigate = useNavigate();
@@ -16,8 +17,10 @@ const LoginPage = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setErrorMsg('');
+
         if (!email || !password) {
-            Swal.fire('Warning!', 'ইমেইল এবং পাসওয়ার্ড উভয়ই প্রয়োজন।', 'warning');
+            setErrorMsg('⚠️ ইমেইল এবং পাসওয়ার্ড উভয়ই প্রয়োজন।');
             return;
         }
 
@@ -27,70 +30,62 @@ const LoginPage = () => {
             navigate('/');
         } catch (error) {
             console.error('Login failed:', error);
-            Swal.fire('Error!', error.message || 'লগইন ব্যর্থ হয়েছে।', 'error');
+            setErrorMsg('⚠️ ' + (error.message || 'লগইন ব্যর্থ হয়েছে।'));
         }
     };
 
     const handleGoogleLogin = async () => {
         try {
-            const result = await googleLogin(); // Firebase Google login
+            const result = await googleLogin();
             const user = result.user;
 
             const email = user.email;
             const uid = user.uid;
             const name = user.displayName;
 
-            // Step 1: Save user to the database
             await axiosPublic.post('/users', {
                 email,
                 uid,
                 displayName: name,
-                role: 'user' // default role
+                role: 'user'
             });
 
-            // Step 2: Get JWT token
-            const tokenRes = await axiosPublic.post('/jwt', {
-                email,
-                uid
-            });
+            const tokenRes = await axiosPublic.post('/jwt', { email, uid });
 
-            // Step 3: Store JWT token
             if (tokenRes.data.token) {
                 localStorage.setItem('token', tokenRes.data.token);
             }
 
-            // Step 4: Set user context
             setUser(user);
 
-            // Step 5: Navigate and notify
             Swal.fire("গুগল লগইন সম্পন্ন হয়েছে!", '', 'success');
             navigate('/');
-
         } catch (error) {
             console.error('Google login failed:', error);
-            Swal.fire('Error!', error.message || 'গুগল লগইন ব্যর্থ হয়েছে।', 'error');
+            setErrorMsg('⚠️ ' + (error.message || 'গুগল লগইন ব্যর্থ হয়েছে।'));
         }
     };
 
-
     const handleResetPassword = async (e) => {
         e.preventDefault();
+        setErrorMsg('');
+
         if (!email) {
-            Swal.fire('Warning!', 'অনুগ্রহ করে আপনার ইমেইল প্রদান করুন।', 'warning');
+            setErrorMsg('⚠️ অনুগ্রহ করে আপনার ইমেইল প্রদান করুন।');
             return;
         }
 
         try {
             await resetPassword(email);
             Swal.fire('সফল!', 'আপনার ইমেইলে একটি রিসেট লিংক পাঠানো হয়েছে।', 'success');
-            setShowReset(false); // return to login form
+            setShowReset(false);
         } catch (error) {
             console.error('Password reset error:', error);
-            Swal.fire('Error!', error.message || 'পাসওয়ার্ড রিসেট ব্যর্থ হয়েছে।', 'error');
+            setErrorMsg('⚠️ ' + (error.message || 'পাসওয়ার্ড রিসেট ব্যর্থ হয়েছে।'));
         }
     };
 
-    if (loading) return <Loading />;
+    // if (loading) return <Loading />;
 
     return (
         <div className="bg-gradient-to-br from-gray-100 to-blue-200 flex items-center justify-center font-kalpurush sm:p-6 lg:p-8 min-h-screen">
@@ -110,6 +105,13 @@ const LoginPage = () => {
                     <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-6">
                         {showReset ? 'পাসওয়ার্ড রিসেট করুন' : 'লগইন করুন'}
                     </h2>
+
+                    {/* Inline Error Message */}
+                    {errorMsg && (
+                        <div className="mb-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg text-center text-sm">
+                            {errorMsg}
+                        </div>
+                    )}
 
                     <form onSubmit={showReset ? handleResetPassword : handleLogin} className="space-y-4">
                         <div>
@@ -150,7 +152,10 @@ const LoginPage = () => {
                             {!showReset && (
                                 <button
                                     type="button"
-                                    onClick={() => setShowReset(true)}
+                                    onClick={() => {
+                                        setShowReset(true);
+                                        setErrorMsg('');
+                                    }}
                                     className="text-sm text-blue-600 hover:underline"
                                 >
                                     পাসওয়ার্ড ভুলে গেছেন?
@@ -159,7 +164,10 @@ const LoginPage = () => {
                             {showReset && (
                                 <button
                                     type="button"
-                                    onClick={() => setShowReset(false)}
+                                    onClick={() => {
+                                        setShowReset(false);
+                                        setErrorMsg('');
+                                    }}
                                     className="text-sm text-gray-500 hover:underline"
                                 >
                                     লগইন পেজে ফিরে যান
