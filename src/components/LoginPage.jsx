@@ -85,7 +85,7 @@ const LoginPage = () => {
         }
     };
 
-    // if (loading) return <Loading />;
+    if (loading) return <Loading />;
 
     return (
         <div className="bg-gradient-to-br from-gray-100 to-blue-200 flex items-center justify-center font-kalpurush sm:p-6 lg:p-8 min-h-screen">

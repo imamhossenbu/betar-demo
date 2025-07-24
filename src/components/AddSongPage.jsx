@@ -125,7 +125,7 @@ const AddSongPage = () => {
                         />
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">সিডি ও কাট (CD & Cut):</label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">আইডি:</label>
                         <input
                             type="text"
                             name="cdCut"
@@ -143,7 +143,6 @@ const AddSongPage = () => {
                         name="duration"
                         value={formData.duration}
                         onChange={handleChange}
-                        placeholder="00:05:30"
                         className="shadow border rounded w-full py-2 px-3 text-gray-700"
                     />
                 </div>

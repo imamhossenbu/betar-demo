@@ -13,6 +13,7 @@ import {
 import useAdmin from '../hooks/useAdmin';
 import Loading from './Loading';
 import useAxiosPublic from '../useAxiosPublic';
+import PrintableContent from './PrintableContent';
 
 
 const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelectedCeremonies }) => {
@@ -443,22 +444,25 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
     };
 
 
-    const today = new Date();
 
-    // Don't convert to Bangla before passing into getDate
-    const banglaDateObj = getDate(today, {
+
+    const today = new Date();
+    const tomorrow = new Date(today); // Create a new Date object based on today
+    tomorrow.setDate(today.getDate() + 1); // Add one day to it
+
+    // Bangla date for tomorrow
+    const banglaDateObj = getDate(tomorrow, { // Pass 'tomorrow' instead of 'today'
         format: 'D MMMM, YYYYb',
         calculationMethod: 'BD',
     });
 
-    // Convert the final output to Bangla if needed (optional)
     const banglaDate = banglaDateObj; // already Bangla formatted
 
-    // English date in Bangla numerals
+    // English date for tomorrow in Bangla numerals
     const toBanglaNumber = (input) =>
         input.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
 
-    const engDate = `${toBanglaNumber(today.getDate())}/${toBanglaNumber(today.getMonth() + 1)}/${toBanglaNumber(today.getFullYear())}`;
+    const engDate = `${toBanglaNumber(tomorrow.getDate())}/${toBanglaNumber(tomorrow.getMonth() + 1)}/${toBanglaNumber(tomorrow.getFullYear())}`; // Use 'tomorrow'
 
     const dayShift = urlShiftKey === 'সকাল' ? 'প্রথম অধিবেশন' : 'দ্বিতীয় অধিবেশন'
 
@@ -799,6 +803,7 @@ const TableView = ({ scheduleData, setScheduleData, selectedCeremonies, setSelec
                 <div>
                     <button className='print:hidden px-4 py-1 bg-blue-500 hover:bg-blue-300 border-0 outline-0 text-white rounded-md font-semibold' onClick={handlePrint}>Print Page</button>
                 </div>
+
             )}
         </div >
     );

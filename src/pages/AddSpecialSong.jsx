@@ -133,7 +133,7 @@ const AddSpecialSong = ({ onSongAdded }) => {
                         />
                     </div>
                     <div>
-                        <label className="block text-gray-700 font-bold mb-2">সিডি/কাট:</label>
+                        <label className="block text-gray-700 font-bold mb-2">আইডি:</label>
                         <input
                             type="text"
                             name="cdCut"
@@ -153,7 +153,6 @@ const AddSpecialSong = ({ onSongAdded }) => {
                         value={formData.duration}
                         onChange={handleChange}
                         className="shadow border rounded w-full py-2 px-3 text-gray-700"
-                        placeholder="00:05:30"
                     />
                 </div>
 
@@ -161,7 +160,7 @@ const AddSpecialSong = ({ onSongAdded }) => {
                 <div className="flex justify-end space-x-4">
                     <button
                         type="button"
-                        onClick={() => navigate('/special-schedule')}
+                        onClick={() => navigate('/')}
                         className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg"
                         disabled={loading}
                     >

@@ -147,7 +147,7 @@ const EntryModal = ({
                                     name="serial"
                                     value={formData.serial || ''}
                                     onChange={handleChange}
-                                    placeholder="Serial"
+                                    placeholder="সিরিয়াল"
                                     className="border rounded px-3 py-2"
                                     required
                                 />
@@ -156,7 +156,7 @@ const EntryModal = ({
                                     name="broadcastTime"
                                     value={formData.broadcastTime || ''}
                                     onChange={handleChange}
-                                    placeholder="Broadcast Time"
+                                    placeholder="প্রচার সময়"
                                     className="border rounded px-3 py-2"
                                     required
                                 />
@@ -167,7 +167,7 @@ const EntryModal = ({
                                 name="period"
                                 value={formData.period || ''}
                                 onChange={handleChange}
-                                placeholder="Period"
+                                placeholder="পিরিয়ড"
                                 className="border rounded px-3 py-2 w-full mb-4"
                                 required
                             />
@@ -183,7 +183,7 @@ const EntryModal = ({
                                     name="artist"
                                     value={formData.artist || ''}
                                     onChange={handleChange}
-                                    placeholder="Artist"
+                                    placeholder="শিল্পী"
                                     className="border rounded px-3 py-2"
                                     required
                                 />
@@ -192,7 +192,7 @@ const EntryModal = ({
                                     name="lyricist"
                                     value={formData.lyricist || ''}
                                     onChange={handleChange}
-                                    placeholder="Lyricist"
+                                    placeholder="গীতিকার"
                                     className="border rounded px-3 py-2"
                                 />
                             </div>
@@ -202,7 +202,7 @@ const EntryModal = ({
                                     name="composer"
                                     value={formData.composer || ''}
                                     onChange={handleChange}
-                                    placeholder="Composer"
+                                    placeholder="সুরকার"
                                     className="border rounded px-3 py-2"
                                 />
                                 <input
@@ -210,7 +210,7 @@ const EntryModal = ({
                                     name="cdCut"
                                     value={formData.cdCut || ''}
                                     onChange={handleChange}
-                                    placeholder="CD Cut"
+                                    placeholder="আইডি"
                                     className="border rounded px-3 py-2"
                                 />
                             </div>
@@ -219,7 +219,7 @@ const EntryModal = ({
                                 name="duration"
                                 value={formData.duration || ''}
                                 onChange={handleChange}
-                                placeholder="Duration (HH:MM:SS)"
+                                placeholder="স্থিতি"
                                 className="border rounded px-3 py-2 w-full mb-4"
                             />
                         </>
