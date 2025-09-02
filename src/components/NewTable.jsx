@@ -513,31 +513,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
             {/* Officer/Supervisor/Announcer Table */}
             <div className="w-full print:w-full print:min-w-full print:max-w-none overflow-x-auto print:overflow-visible">
                 <table className="w-full table-fixed border-collapse border border-gray-700 print:w-full print:min-w-full print:max-w-none">
-                    <thead>
-                        <tr className="text-sm text-left">
-                            <td
-                                contentEditable
-                                suppressContentEditableWarning
-                                className="border border-gray-700 px-2 py-1 w-[25%] whitespace-normal break-words"
-                            >
-                                অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ
-                            </td>
-                            <td
-                                contentEditable
-                                suppressContentEditableWarning
-                                className="border border-gray-700 px-2 py-1 w-[37.5%] whitespace-normal break-words"
-                            >
-                                অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান
-                            </td>
-                            <td
-                                contentEditable
-                                suppressContentEditableWarning
-                                className="border border-gray-700 px-2 py-1 w-[37.5%] whitespace-normal break-words"
-                            >
-                                ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন
-                            </td>
-                        </tr>
-                    </thead>
+                    <GlobalPersistentHeaderRow />
                 </table>
             </div>
 
@@ -767,21 +743,7 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
                 isSpecialSchedule={isSpecialSchedule} // Pass this prop to EntryModal
             />
 
-            <footer className="flex flex-col sm:flex-row items-center justify-between my-10  text-xs sm:text-sm text-center sm:text-left space-y-4 sm:space-y-0">
-                <div className='w-full sm:w-auto text-center'>
-                    <p contentEditable suppressContentEditableWarning>মো. ফারুক হাওলাদার</p>
-                    <p contentEditable suppressContentEditableWarning>টেপরেকর্ড লাইব্রেরীয়ান</p>
-                </div>
-                <div className='w-full sm:w-auto text-center'>
-                    <p contentEditable suppressContentEditableWarning>হাসনাইন ইমতিয়াজ</p>
-                    <p contentEditable suppressContentEditableWarning>সহকারী পরিচালক(অনুষ্ঠান)</p>
-                </div>
-                <div className='w-full sm:w-auto text-center'>
-                    <p contentEditable suppressContentEditableWarning>মো. রফিকুল ইসলাম </p>
-                    <p contentEditable suppressContentEditableWarning>উপ-আঞ্চলিক পরিচালক </p>
-                    <p contentEditable suppressContentEditableWarning>আঞ্চলিক পরিচালকের পক্ষে </p>
-                </div>
-            </footer>
+            <GlobalPersistentFooter />
             <div className='flex justify-between text-sm mb-10'>
                 <div>পরীক্ষিত</div>
                 <div>লগ বইয়ে অন্তর্ভূক্ত</div>
@@ -799,3 +761,144 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
 };
 
 export default NewTable;
+
+
+function GlobalPersistentHeaderRow() {
+    const STORAGE_KEY = 'schedule_header_global_v1';
+
+    // ডিফল্ট টেক্সট (তোমার এখনকার ভ্যালুগুলো)
+    const defaults = {
+        h1: 'অফিসার ইনচার্জঃ হাসনাইন ইমতিয়াজ',
+        h2: 'অধিবেশন তত্ত্বাবধায়কঃ মো. মাইনুল ইসলাম/ মো. হাবিবুর রহমান',
+        h3: 'ঘোষক/ঘোষিকাঃ শিপ্রা দেউরী/ অমিতা রায়/ মঞ্জুর রাশেদ/ মো. তানভীর হোসেন',
+    };
+
+    // uncontrolled contentEditable রাখার জন্য refs
+    const refs = {
+        h1: React.useRef(null),
+        h2: React.useRef(null),
+        h3: React.useRef(null),
+    };
+
+    // প্রথম লোডে লোকালস্টোরেজ → না থাকলে defaults বসাও
+    React.useEffect(() => {
+        let fromLS = null;
+        try { fromLS = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch { }
+        const data = { ...defaults, ...(fromLS || {}) };
+        Object.entries(data).forEach(([k, v]) => {
+            if (refs[k]?.current) refs[k].current.textContent = v || '';
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // সেভ হেল্পার
+    const saveKV = React.useCallback((key, val) => {
+        let obj = {};
+        try { obj = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { }
+        obj[key] = val ?? '';
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+    }, []);
+
+    // টাইপ করলেই সেভ (চাইলে onBlur ব্যবহার করতে পারো)
+    const onInput = (k) => (e) => {
+        saveKV(k, e.currentTarget.textContent || '');
+    };
+
+    return (
+        <thead>
+            <tr className="text-sm text-left">
+                <td
+                    ref={refs.h1}
+                    contentEditable
+                    suppressContentEditableWarning
+                    onInput={onInput('h1')}
+                    className="border border-gray-700 px-2 py-1 w-[25%] whitespace-normal break-words"
+                >
+                    {defaults.h1}
+                </td>
+                <td
+                    ref={refs.h2}
+                    contentEditable
+                    suppressContentEditableWarning
+                    onInput={onInput('h2')}
+                    className="border border-gray-700 px-2 py-1 w-[37.5%] whitespace-normal break-words"
+                >
+                    {defaults.h2}
+                </td>
+                <td
+                    ref={refs.h3}
+                    contentEditable
+                    suppressContentEditableWarning
+                    onInput={onInput('h3')}
+                    className="border border-gray-700 px-2 py-1 w-[37.5%] whitespace-normal break-words"
+                >
+                    {defaults.h3}
+                </td>
+            </tr>
+        </thead>
+    );
+}
+
+
+function GlobalPersistentFooter() {
+    const STORAGE_KEY = 'schedule_footer_global_v1';
+
+    // ডিফল্ট টেক্সট (চাইলে বদলাও)
+    const defaults = {
+        c1n: 'মো. ফারুক হাওলাদার',
+        c1t: 'টেপরেকর্ড লাইব্রেরীয়ান',
+        c2n: 'হাসনাইন ইমতিয়াজ',
+        c2t: 'সহকারী পরিচালক(অনুষ্ঠান)',
+        c3n: 'মো. রফিকুল ইসলাম ',
+        c3t: 'উপ-আঞ্চলিক পরিচালক ',
+        c3x: 'আঞ্চলিক পরিচালকের পক্ষে ',
+    };
+
+    // প্রতিটি লাইনের জন্য ref (uncontrolled contentEditable → caret jump হবে না)
+    const refs = {
+        c1n: React.useRef(null), c1t: React.useRef(null),
+        c2n: React.useRef(null), c2t: React.useRef(null),
+        c3n: React.useRef(null), c3t: React.useRef(null), c3x: React.useRef(null),
+    };
+
+    // প্রথম লোডে লোকালস্টোরেজ → না থাকলে defaults
+    React.useEffect(() => {
+        let fromLS = null;
+        try { fromLS = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch { }
+        const data = { ...defaults, ...(fromLS || {}) };
+        Object.entries(data).forEach(([k, v]) => {
+            if (refs[k]?.current) refs[k].current.textContent = v || '';
+        });
+    }, []);
+
+    // সেভ হেল্পার
+    const saveKV = React.useCallback((key, val) => {
+        let obj = {};
+        try { obj = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { }
+        obj[key] = val ?? '';
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+    }, []);
+
+    // টাইপ করলেই সেভ (চাইলে onBlur ব্যবহার করতে পারো)
+    const onInput = (k) => (e) => {
+        saveKV(k, e.currentTarget.textContent || '');
+    };
+
+    return (
+        <footer className="flex flex-col sm:flex-row items-center justify-between my-10 text-xs sm:text-sm text-center sm:text-left space-y-4 sm:space-y-0">
+            <div className='w-full sm:w-auto text-center'>
+                <p ref={refs.c1n} contentEditable suppressContentEditableWarning onInput={onInput('c1n')}>{defaults.c1n}</p>
+                <p ref={refs.c1t} contentEditable suppressContentEditableWarning onInput={onInput('c1t')}>{defaults.c1t}</p>
+            </div>
+            <div className='w-full sm:w-auto text-center'>
+                <p ref={refs.c2n} contentEditable suppressContentEditableWarning onInput={onInput('c2n')}>{defaults.c2n}</p>
+                <p ref={refs.c2t} contentEditable suppressContentEditableWarning onInput={onInput('c2t')}>{defaults.c2t}</p>
+            </div>
+            <div className='w-full sm:w-auto text-center'>
+                <p ref={refs.c3n} contentEditable suppressContentEditableWarning onInput={onInput('c3n')}>{defaults.c3n}</p>
+                <p ref={refs.c3t} contentEditable suppressContentEditableWarning onInput={onInput('c3t')}>{defaults.c3t}</p>
+                <p ref={refs.c3x} contentEditable suppressContentEditableWarning onInput={onInput('c3x')}>{defaults.c3x}</p>
+            </div>
+        </footer>
+    );
+}
