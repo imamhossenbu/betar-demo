@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
 import { MdOutlineClose } from 'react-icons/md';
 
 const EntryModal = ({
@@ -34,14 +33,12 @@ const EntryModal = ({
         setFormData((prev) => {
             const cleared = { ...prev, programType: newType };
             if (newType === 'Song') {
-                // Clear fields not needed for songs
                 cleared.serial = '';
                 cleared.broadcastTime = '';
                 cleared.period = '';
                 cleared.day = '';
                 cleared.shift = '';
             } else {
-                // Clear song-specific fields
                 cleared.artist = '';
                 cleared.lyricist = '';
                 cleared.composer = '';
@@ -55,28 +52,6 @@ const EntryModal = ({
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        let missingFields = [];
-
-        if (!formData.programType) missingFields.push('Program Type');
-        if (!formData.programDetails) missingFields.push('Program Details');
-
-        if (programType === 'Song') {
-            if (!formData.artist) missingFields.push('Artist');
-        } else {
-            if (!formData.serial) missingFields.push('Serial');
-            if (!formData.broadcastTime) missingFields.push('Broadcast Time');
-            if (!isSpecialSchedule && !formData.period) missingFields.push('Period');
-        }
-
-        if (missingFields.length > 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'ভুল হয়েছে!',
-                text: `নিম্নলিখিত তথ্যগুলি পূরণ করা আবশ্যক: ${missingFields.join(', ')}।`,
-            });
-            return;
-        }
-
         const cleanedFormData = {
             ...formData,
             programType,
@@ -88,7 +63,6 @@ const EntryModal = ({
             cleanedFormData.period = '';
             cleanedFormData.day = '';
             cleanedFormData.shift = '';
-            // ✅ keep programDetails for Song
         } else {
             if (isSpecialSchedule) {
                 cleanedFormData.day = '';
@@ -120,13 +94,14 @@ const EntryModal = ({
                             value={programType}
                             onChange={handleProgramTypeChange}
                             className="border rounded px-3 py-2 w-full"
+                            required
                         >
                             <option value="General">General (সাধারণ)</option>
                             <option value="Song">গান/অনুষ্ঠান</option>
                         </select>
                     </div>
 
-                    {/* Program Details */}
+                    {/* Program Details (optional, for both types) */}
                     <div className="mb-4">
                         <label className="block text-sm font-bold mb-1">অনুষ্ঠান বিবরণী:</label>
                         <textarea
@@ -134,7 +109,6 @@ const EntryModal = ({
                             value={formData.programDetails || ''}
                             onChange={handleChange}
                             className="border rounded w-full px-3 py-2"
-                            required
                         />
                     </div>
 
@@ -185,7 +159,6 @@ const EntryModal = ({
                                     onChange={handleChange}
                                     placeholder="শিল্পী"
                                     className="border rounded px-3 py-2"
-                                    required
                                 />
                                 <input
                                     type="text"

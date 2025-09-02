@@ -492,10 +492,10 @@ const NewTable = ({ scheduleData, setScheduleData, selectedCeremonies, setSelect
                     <div className="flex flex-col items-center justify-center text-sm mb-4 md:mb-0 relative w-full md:w-auto">
                         <img className="w-20 h-20 mb-2" src="/logo.png" alt="logo" />
                         <div className="text-center leading-5">
-                            <p>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
-                            <p>বাংলাদেশ বেতার, বরিশাল।</p>
-                            <p><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">অ্যাপঃ</span> Bangladesh Betar</p>
-                            <p>ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
+                            <p contentEditable suppressContentEditableWarning>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
+                            <p contentEditable suppressContentEditableWarning>বাংলাদেশ বেতার, বরিশাল।</p>
+                            <p contentEditable suppressContentEditableWarning><span className="font-semibold">ওয়েবসাইটঃ</span> www.betar.gov.bd <span className="font-semibold">অ্যাপঃ</span> Bangladesh Betar</p>
+                            <p contentEditable suppressContentEditableWarning>ফ্রিকোয়েন্সিঃ মধ্যম তরঙ্গ ২৩৩.১০ মিটার অর্থাৎ ১২৮৭ কিলহার্জ এবং এফ.এম. ১০৫.২ মেগাহার্জ</p>
                         </div>
                     </div>
                     <div className="flex-1 hidden md:block">

@@ -32,20 +32,7 @@ const AddSongPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        let missingFields = [];
 
-        if (!formData.artist.trim()) {
-            missingFields.push('Artist');
-        }
-
-        if (missingFields.length > 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'ভুল হয়েছে!',
-                text: `নিম্নলিখিত তথ্যগুলি পূরণ করা আবশ্যক: ${missingFields.join(', ')}।`,
-            });
-            return;
-        }
 
         setLoading(true);
 
@@ -98,7 +85,7 @@ const AddSongPage = () => {
                             value={formData.artist}
                             onChange={handleChange}
                             className="shadow border rounded w-full py-2 px-3 text-gray-700"
-                            required
+
                         />
                     </div>
                     <div>

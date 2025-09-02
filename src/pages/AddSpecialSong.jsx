@@ -27,14 +27,6 @@ const AddSpecialSong = ({ onSongAdded }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { artist } = formData;
-        if (!artist.trim()) {
-            return Swal.fire({
-                icon: 'error',
-                title: 'শিল্পীর নাম আবশ্যক!',
-                text: 'অনুগ্রহ করে শিল্পীর নাম প্রদান করুন।',
-            });
-        }
 
         const payload = {
             ...formData,
@@ -91,7 +83,7 @@ const AddSpecialSong = ({ onSongAdded }) => {
                         value={formData.programDetails}
                         onChange={handleChange}
                         className="shadow border rounded w-full py-2 px-3 text-gray-700"
-                        placeholder="অনুষ্ঠানের বিবরণ দিন (ঐচ্ছিক)"
+                        placeholder="অনুষ্ঠানের বিবরণ দিন"
                     ></textarea>
                 </div>
 
@@ -105,7 +97,7 @@ const AddSpecialSong = ({ onSongAdded }) => {
                             value={formData.artist}
                             onChange={handleChange}
                             className="shadow border rounded w-full py-2 px-3 text-gray-700"
-                            required
+
                         />
                     </div>
                     <div>
